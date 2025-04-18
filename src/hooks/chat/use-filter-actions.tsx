@@ -8,7 +8,7 @@ import {
 } from "@hugeicons/react";
 import { useFiltersStore, useSessionsStore } from "@/store/chat";
 import { Button } from "@/components/ui/button";
-import { useChatSession } from "../use-chat-session";
+import { useChatSessionDB } from "../db/use-chat-session";
 /**
  * 构建过滤器动作项，包括新建会话、切换主题、删除当前会话
  * 抽离为独立函数以便在不同组件中复用
@@ -16,7 +16,7 @@ import { useChatSession } from "../use-chat-session";
 export const useFilterActions = () => {
   // 获取系统主题设置
   const { theme, setTheme } = useTheme();
-  const { removeSessionMutation } = useChatSession();
+  const { removeSessionMutation } = useChatSessionDB();
   // 获取会话相关操作
   const { createSession, currentSession } = useSessionsStore();
 

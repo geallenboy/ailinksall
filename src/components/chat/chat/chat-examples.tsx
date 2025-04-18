@@ -1,13 +1,13 @@
 import { useChatContext } from "@/context/chat";
-import { usePromptsContext } from "@/context/prompts";
 import { ArrowRight02Icon } from "@hugeicons/react";
 import { motion } from "framer-motion";
 import { Flex } from "@/components/ui/flex";
 import { Type } from "@/components/ui/text";
+import { usePromptsQuery } from "@/hooks/chat";
 
 export type TChatExamples = {};
 export const ChatExamples = () => {
-  const { allPrompts } = usePromptsContext();
+  const { allPrompts } = usePromptsQuery();
   const { editor } = useChatContext();
   if (!allPrompts?.length) {
     return null;

@@ -1,43 +1,9 @@
 import { get, set } from "idb-keyval";
-import { TBaseModel, TModelKey } from "./use-model-list";
-import { TToolKey } from "./use-tools";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { TAssistant } from "@/types/chat.type";
+import { TApiKeys, TBaseModel, TPreferences } from "@/types/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
 
-export type TApiKeys = Partial<Record<TBaseModel, string>>;
-export type TPreferences = {
-  defaultAssistant: TAssistant["key"];
-  systemPrompt: string;
-  messageLimit: number;
-  temperature: number;
-  maxTokens: number;
-  topP: number;
-  topK: number;
-  googleSearchEngineId?: string;
-  googleSearchApiKey?: string;
-  defaultPlugins: TToolKey[];
-  whisperSpeechToTextEnabled: boolean;
-  defaultWebSearchEngine: "google" | "duckduckgo";
-  ollamaBaseUrl: string;
-  memories: string[];
-};
-
-export const defaultPreferences: TPreferences = {
-  defaultAssistant: "gpt-3.5-turbo",
-  systemPrompt: "You're helpful assistant that can help me with my questions.",
-  messageLimit: 30,
-  temperature: 0.5,
-  maxTokens: 1000,
-  topP: 1.0,
-  topK: 5,
-  defaultPlugins: [],
-  whisperSpeechToTextEnabled: false,
-  defaultWebSearchEngine: "duckduckgo",
-  ollamaBaseUrl: "http://localhost:11434",
-  memories: [],
-};
-
-export const usePreferences = () => {
+export const usePreferencesDB = () => {
   const preferencesQuery = useQuery({
     queryKey: ["preferences"],
     queryFn: () => getPreferences(),

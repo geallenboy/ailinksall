@@ -3,7 +3,7 @@
  * 用于处理聊天会话的创建、获取和操作
  */
 import { create } from 'zustand';
-import { TChatMessage, TChatSession } from "@/types/chat.type";
+import { TChatMessage, TChatSession } from "@/types/chat";
 
 
 /**

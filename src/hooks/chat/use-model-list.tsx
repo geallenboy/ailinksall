@@ -2,51 +2,18 @@ import { ModelIcon } from "@/components/chat/icons/model-icon";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenAI } from "@langchain/openai";
-import { defaultPreferences } from "./use-preferences";
-import { TToolKey } from "./use-tools";
-import { usePreferenceContext } from "@/context";
+
 import { useQuery } from "@tanstack/react-query";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
-import { JSX, useMemo } from "react";
-import { TAssistant } from "@/types/chat.type";
-import { useAssistants } from "./use-assistants";
-
-export type TBaseModel = "openai" | "anthropic" | "gemini" | "ollama";
-
-export const models = [
-  "gpt-4o",
-  "gpt-4",
-  "gpt-4-turbo",
-  "gpt-3.5-turbo",
-  "gpt-3.5-turbo-0125",
-  "gpt-3.5-turbo-instruct",
-  "claude-3-opus-20240229",
-  "claude-3-sonnet-20240229",
-  "claude-3-haiku-20240307",
-  "gemini-pro",
-  "gemini-1.5-flash-latest",
-  "gemini-1.5-pro-latest",
-  "phi3:latest",
-];
-
-export type TModelKey = (typeof models)[number] | string;
-
-export type TModel = {
-  name: string;
-  key: TModelKey;
-  isNew?: boolean;
-  icon: (size: "sm" | "md" | "lg") => JSX.Element;
-  inputPrice?: number;
-  outputPrice?: number;
-  tokens: number;
-  plugins: TToolKey[];
-  baseModel: TBaseModel;
-  maxOutputTokens: number;
-};
+import { useMemo } from "react";
+import { useAssistantsDB } from "../db/use-assistants";
+import { usePreferencesStore } from "@/store/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
+import { TAssistant, TBaseModel, TModel, TModelKey } from "@/types/chat";
 
 export const useModelList = () => {
-  const { preferences } = usePreferenceContext();
-  const assistantsProps = useAssistants();
+  const { preferences } = usePreferencesStore();
+  const assistantsProps = useAssistantsDB();
   const ollamaModelsQuery = useQuery({
     queryKey: ["ollama-models"],
     queryFn: () =>
@@ -293,6 +260,7 @@ export const useModelList = () => {
       case "ollama":
         return "phi3:latest";
     }
+    return "gpt-3.5-turbo";
   };
 
   const assistants: TAssistant[] = [

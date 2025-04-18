@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { TPrompt } from '@/hooks/use-prompts';
+import { TPrompt } from '@/hooks/db/use-prompts';
 
 
 // 定义Zustand store的状态类型

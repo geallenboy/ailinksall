@@ -10,7 +10,7 @@ import {
 } from "@/lib/chat/tiptap-extension";
 import { useTools } from "@/hooks";
 import { useChatStore } from "@/store/chat";
-import { TToolResponse } from "@/types/chat.type";
+import { TToolResponse } from "@/types/chat/chat.type";
 
 /**
  * 获取聊天编辑器的扩展配置

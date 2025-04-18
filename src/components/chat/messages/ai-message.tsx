@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import * as Selection from "selection-popover";
 
 import { useChatContext, useSessionsContext } from "@/context";
-import { TChatMessage, TToolResponse } from "@/types/chat.type";
+import { TChatMessage, TToolResponse } from "@/types/chat/chat.type";
 
 import {
   useClipboard,

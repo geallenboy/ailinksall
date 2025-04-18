@@ -1,14 +1,4 @@
-import { TModelKey } from "@/types/model.type";
-
-export type TAssistantType = "base" | "custom";
-
-export type TAssistant = {
-    name: string;
-    systemPrompt: string;
-    baseModel: TModelKey;
-    key: TModelKey | string;
-    type: TAssistantType;
-};
+import { TAssistant } from "@/types/chat";
 
 export type TLLMInputProps = {
     context?: string;

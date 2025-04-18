@@ -1,9 +1,9 @@
-import { usePreferenceContext } from "@/context";
+import { usePreferencesStore } from "@/store/chat";
 import { SettingCard } from "./setting-card";
 import { SettingsContainer } from "./settings-container";
 
 export const MemorySettings = () => {
-  const { updatePreferences, preferences } = usePreferenceContext();
+  const { preferences } = usePreferencesStore();
 
   const renderMemory = (memory: string) => {
     return (

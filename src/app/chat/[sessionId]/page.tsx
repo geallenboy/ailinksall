@@ -24,7 +24,7 @@ const ChatSessionPage = () => {
       {!isLoading && (
         <>
           {/* <ChatMessages /> */}
-          {/* <ChatInput /> */}
+          <ChatInput />
         </>
       )}
     </div>

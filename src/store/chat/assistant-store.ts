@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { TAssistant } from "@/types/chat.type";
-import { TModel } from "@/hooks/use-model-list";
+import { TAssistant } from '@/types/chat';
 
 type AssistantStore = {
     isAssistantOpen: boolean;

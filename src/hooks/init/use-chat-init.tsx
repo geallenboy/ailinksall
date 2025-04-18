@@ -6,7 +6,7 @@ import { useChatEffects } from "./use-chat-effects";
  * 初始化聊天功能的hook
  * 可以在任何组件中调用一次
  */
-export const useChatInitializer = () => {
+export const useChatInit = () => {
   const { initEditor } = useChatStore();
 
   // 初始化编辑器

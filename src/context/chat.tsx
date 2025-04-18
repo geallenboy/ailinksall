@@ -1,13 +1,13 @@
 "use client";
 import { useToast } from "@/components/ui/use-toast";
-import { defaultPreferences, useTools } from "@/hooks";
+import { useTools } from "@/hooks";
 import {
   TAssistant,
   TChatMessage,
   TLLMInputProps,
   TToolResponse,
-} from "@/types/chat.type";
-import { useModelList } from "@/hooks/use-model-list";
+} from "@/types/chat";
+import { useModelList } from "@/hooks/chat/use-model-list";
 import { removeExtraSpaces, sortMessages } from "@/lib/chat/helper";
 import {
   DisableEnter,
@@ -32,8 +32,9 @@ import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import dayjs from "dayjs";
 import { createContext, useContext, useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { useSessionsContext, usePreferenceContext } from "@/context";
-import { useSettingsStore } from "@/store/chat";
+import { useSessionsContext } from "@/context";
+import { usePreferencesStore, useSettingsStore } from "@/store/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
 
 export type TChatContext = {
   editor: ReturnType<typeof useEditor>;
@@ -76,7 +77,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
   const [currentMessage, setCurrentMessage] = useState<TChatMessage>();
   const [currentTools, setCurrentTools] = useState<TToolResponse[]>([]);
   const { getSessionById, updateSessionMutation } = useSessionsContext();
-  const { apiKeys, preferences, updatePreferences } = usePreferenceContext();
+  const { apiKeys, preferences, updatePreferences } = usePreferencesStore();
   const { createInstance, getModelByKey } = useModelList();
   const { toast } = useToast();
   const { getToolByKey } = useTools();
@@ -261,7 +262,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
         })
         ?.map((p) =>
           getToolByKey(p)?.tool({
-            updatePreferences,
+            updatePreferences: updatePreferences as any,
             preferences,
             apiKeys,
             sendToolResponse: (arg: TToolResponse) => {

@@ -1,8 +1,7 @@
 "use client";
 
-import { useChatSession } from "@/hooks";
-import { TChatMessage, TChatSession,  } from "@/types/chat.type";
-import { Editor } from "@tiptap/react";
+import { useChatSessionDB } from "@/hooks";
+import { TChatMessage, TChatSession } from "@/types/chat/chat.type";
 import { useParams, useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
@@ -22,7 +21,7 @@ export type TSessionsContext = {
   refetchCurrentSession?: () => void;
   addMessageToSession: (sessionId: string, message: TChatMessage) => void;
   getSessionById: (id: string) => Promise<TChatSession | undefined>;
-} & ReturnType<typeof useChatSession>;
+} & ReturnType<typeof useChatSessionDB>;
 
 export const SessionContext = createContext<TSessionsContext | undefined>(
   undefined
@@ -49,7 +48,7 @@ export const SessionsProvider = ({ children }: TSessionsProvider) => {
     TChatSession | undefined
   >();
   const [isGenerating, setIsGenerating] = useState(false);
-  const props = useChatSession(sessionId?.toString());
+  const props = useChatSessionDB(sessionId?.toString());
   const {
     sessionsQuery,
     createNewSessionMutation,

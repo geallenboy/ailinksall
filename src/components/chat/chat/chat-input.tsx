@@ -7,17 +7,11 @@ import { useEffect, useRef, useState } from "react";
 import {
   useAssistantContext,
   useChatContext,
-  usePreferenceContext,
   useSessionsContext,
 } from "@/context";
-import {
-  defaultPreferences,
-  useModelList,
-  useRecordVoice,
-  useScrollToBottom,
-} from "@/hooks";
+import { useModelList, useRecordVoice, useScrollToBottom } from "@/hooks";
 import { ArrowDown02Icon, Navigation03Icon } from "@hugeicons/react";
-import { TAssistant } from "@/types/chat.type";
+import { TAssistant } from "@/types/chat";
 import { slideUpVariant } from "@/lib/chat/framer-motion";
 import { cn } from "@/lib/utils";
 import { ChatExamples } from "@/components/chat/chat/chat-examples";
@@ -26,6 +20,8 @@ import { PluginSelect } from "@/components/chat/plugin-select";
 import { PromptsBotsCombo } from "@/components/chat/prompts-bots-combo";
 import { QuickSettings } from "@/components/chat/quick-settings";
 import { Button } from "@/components/ui/button";
+import { usePreferencesStore } from "@/store/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
 
 export type TAttachment = {
   file?: File;
@@ -56,7 +52,7 @@ export const ChatInput = () => {
     stopGeneration,
   } = useChatContext();
 
-  const { preferences, updatePreferences } = usePreferenceContext();
+  const { preferences, updatePreferences } = usePreferencesStore();
   const { models, getAssistantByKey, getAssistantIcon } = useModelList();
 
   const inputRef = useRef<HTMLTextAreaElement>(null);

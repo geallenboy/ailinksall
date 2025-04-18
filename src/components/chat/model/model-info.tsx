@@ -1,5 +1,5 @@
-import { TModel } from "@/hooks/use-model-list";
 import { formatNumber } from "@/lib/chat/helper";
+import { TModel } from "@/types/chat";
 
 export type TModelInfo = {
   model: TModel;

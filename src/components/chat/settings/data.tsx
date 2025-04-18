@@ -1,6 +1,4 @@
-import { usePreferenceContext } from "@/context/preferences";
 import { useSessionsContext } from "@/context/sessions";
-import { TPreferences, defaultPreferences } from "@/hooks/use-preferences";
 import { generateAndDownloadJson } from "@/lib/chat/helper";
 import { ChangeEvent } from "react";
 import { z } from "zod";
@@ -12,7 +10,9 @@ import { PopOverConfirmProvider } from "@/components/ui/use-confirm-popover";
 import { useToast } from "@/components/ui/use-toast";
 import { SettingCard } from "./setting-card";
 import { SettingsContainer } from "./settings-container";
-import { useSettingsStore } from "@/store/chat";
+import { usePreferencesStore, useSettingsStore } from "@/store/chat";
+import { TPreferences } from "@/types/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
 
 const apiSchema = z.object({
   openai: z.string().optional(),
@@ -110,13 +110,8 @@ export const Data = () => {
     createSession,
   } = useSessionsContext();
 
-  const {
-    preferences,
-    apiKeys,
-    updatePreferences,
-    updateApiKey,
-    updateApiKeys,
-  } = usePreferenceContext();
+  const { preferences, apiKeys, updatePreferences, updateApiKeys } =
+    usePreferencesStore();
 
   function handleFileSelect(event: ChangeEvent<HTMLInputElement>) {
     const input = event.target as HTMLInputElement;

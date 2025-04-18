@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
-import { TBaseModel, useModelList } from "./use-model-list";
+import { useModelList } from "./use-model-list";
 import { useToast } from "@/components/ui/use-toast";
-import { usePreferences } from "./use-preferences";
+import { usePreferencesDB } from "../db/use-preferences";
 import { Button } from "@/components/ui/button";
+import { TBaseModel } from "@/types/chat";
 
 export const useLLMTest = () => {
   const { getModelByKey, createInstance, getTestModelKey } = useModelList();
@@ -12,7 +13,7 @@ export const useLLMTest = () => {
 
   const { toast } = useToast();
 
-  const { getApiKey } = usePreferences();
+  const { getApiKey } = usePreferencesDB();
 
   const testLLM = async (model: TBaseModel, apiKey?: string) => {
     try {

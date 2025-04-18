@@ -1,7 +1,6 @@
 "use client";
 
-import { TAssistant } from "@/types/chat.type";
-import { TModel, useModelList } from "@/hooks/use-model-list";
+import { useModelList } from "@/hooks/chat/use-model-list";
 import React, {
   createContext,
   useContext,
@@ -9,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { usePreferenceContext } from "./preferences";
+
 import { Drawer } from "vaul";
 import { cn } from "@/lib/utils";
 import {
@@ -25,7 +24,9 @@ import { Type } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { CreateAssistant } from "@/components/chat/assistants/create-assistant";
 import { AssistantItem } from "@/components/chat/assistants/assistant-item";
-import { defaultPreferences } from "@/hooks";
+import { TAssistant, TModel } from "@/types/chat";
+import { usePreferencesStore } from "@/store/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
 
 export type TAssistantsProvider = {
   children: React.ReactNode;
@@ -68,7 +69,7 @@ export const AssistantsProvider = ({ children }: TAssistantsProvider) => {
 
   const [updateAssistant, setUpdateAssistant] = useState<TAssistant>();
   const [selectedAssistant, setSelectedAssistant] = useState<string>("");
-  const { preferences, updatePreferences } = usePreferenceContext();
+  const { preferences, updatePreferences } = usePreferencesStore();
 
   const open = () => {
     setIsAssistantOpen(true);

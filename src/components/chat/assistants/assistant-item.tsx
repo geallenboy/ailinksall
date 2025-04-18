@@ -1,9 +1,6 @@
-import { TAssistant } from "@/types/chat.type";
-import { useModelList } from "@/hooks/use-model-list";
+import { useModelList } from "@/hooks/chat/use-model-list";
 import { useState } from "react";
-import { usePreferenceContext } from "@/context";
 import { CommandItem } from "@/components/ui/command";
-import { defaultPreferences } from "@/hooks/use-preferences";
 import { Flex } from "@/components/ui/flex";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -14,6 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { DotsThree, Pencil, TrashSimple } from "@phosphor-icons/react";
+import { TAssistant } from "@/types/chat";
+import { usePreferencesStore } from "@/store/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
 
 export type TAssistantItem = {
   assistant: TAssistant;
@@ -32,7 +32,7 @@ export const AssistantItem = ({
   const assistantProps = getAssistantByKey(assistant.key);
   const [open, setOpen] = useState(false);
   const model = assistantProps?.model;
-  const { updatePreferences } = usePreferenceContext();
+  const { updatePreferences } = usePreferencesStore();
 
   return (
     <CommandItem

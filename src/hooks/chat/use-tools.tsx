@@ -1,52 +1,17 @@
 import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
 
-import { FC, ReactNode, RefAttributes } from "react";
-import { TApiKeys, TPreferences } from "./use-preferences";
-import { usePreferenceContext } from "@/context/preferences";
-import { googleSearchTool } from "@/lib/chat/tools/google";
-import { duckduckGoTool } from "@/lib/chat/tools/duckduckgo";
-import { dalleTool } from "@/lib/chat/tools/dalle";
+import { googleSearchTool } from "@/lib/tools/google";
+import { duckduckGoTool } from "@/lib/tools/duckduckgo";
+import { dalleTool } from "@/lib/tools/dalle";
 
-import {
-  GlobalSearchIcon,
-  HugeiconsProps,
-  Image01Icon,
-  BrainIcon,
-} from "@hugeicons/react";
-import { TToolResponse } from "@/types/chat.type";
-import { memoryTool } from "@/lib/chat/tools/memory";
+import { GlobalSearchIcon, Image01Icon, BrainIcon } from "@hugeicons/react";
+import { memoryTool } from "@/lib/tools/memory";
 import { useSettingsStore } from "@/store/chat/settings-store";
-
-export const toolKeys = ["calculator", "web_search"];
-export type TToolKey = (typeof toolKeys)[number];
-export type IconSize = "sm" | "md" | "lg";
-
-export type TToolArg = {
-  updatePreferences: ReturnType<
-    typeof usePreferenceContext
-  >["updatePreferences"];
-  preferences: TPreferences;
-  apiKeys: TApiKeys;
-  sendToolResponse: (response: TToolResponse) => void;
-};
-
-export type TTool = {
-  key: TToolKey;
-  description: string;
-  renderUI?: (args: any) => ReactNode;
-  name: string;
-  loadingMessage?: string;
-  resultMessage?: string;
-  tool: (args: TToolArg) => any;
-  icon: FC<Omit<HugeiconsProps, "ref"> & RefAttributes<SVGSVGElement>>;
-  smallIcon: FC<Omit<HugeiconsProps, "ref"> & RefAttributes<SVGSVGElement>>;
-  validate?: () => Promise<boolean>;
-  validationFailedAction?: () => void;
-  showInMenu?: boolean;
-};
+import { usePreferencesStore } from "@/store/chat";
+import { TTool, TToolKey } from "@/types/chat";
 
 export const useTools = () => {
-  const { preferences, updatePreferences, apiKeys } = usePreferenceContext();
+  const { preferences } = usePreferencesStore();
   const { open } = useSettingsStore();
   const tools: TTool[] = [
     {

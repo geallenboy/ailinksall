@@ -8,7 +8,7 @@ export type TPrompt = {
   content: string;
 };
 
-export const usePrompts = () => {
+export const usePromptsDB = () => {
   const getPrompts = async (): Promise<TPrompt[]> => {
     return (await get("prompts")) || [];
   };

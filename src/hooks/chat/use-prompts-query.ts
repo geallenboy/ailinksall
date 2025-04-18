@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { TPrompt } from '@/hooks/use-prompts';
+import { TPrompt } from '@/hooks/db/use-prompts';
 
 // 封装提示相关的React Query钩子
 export function usePromptsQuery() {

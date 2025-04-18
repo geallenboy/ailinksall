@@ -1,6 +1,6 @@
 import { useSessionsContext } from "@/context/sessions";
-import { TChatSession } from "@/types/chat.type";
-import { useModelList } from "@/hooks/use-model-list";
+import { TChatSession } from "@/types/chat/chat.type";
+import { useModelList } from "@/hooks/chat/use-model-list";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";

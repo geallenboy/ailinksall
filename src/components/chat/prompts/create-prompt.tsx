@@ -1,4 +1,4 @@
-import { TPrompt, usePrompts } from "@/hooks/use-prompts";
+import { TPrompt, usePromptsDB } from "@/hooks/db";
 import { ArrowLeft } from "@phosphor-icons/react";
 import Document from "@tiptap/extension-document";
 import HardBreak from "@tiptap/extension-hard-break";
@@ -26,7 +26,7 @@ export const CreatePrompt = ({
   onUpdatePrompt,
 }: TCreatePrompt) => {
   const [promptTitle, setPromptTitle] = useState(prompt?.name);
-  const { setPrompt, getPrompts } = usePrompts();
+  const { setPrompt, getPrompts } = usePromptsDB();
   const promptTitleRef = useRef<HTMLInputElement | null>(null);
   const [rawPrompt, setRawPrompt] = useState("");
   const editor = useEditor({

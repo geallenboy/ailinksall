@@ -14,7 +14,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { useModelList } from "@/hooks/use-model-list";
+import { useModelList } from "@/hooks/chat/use-model-list";
 import { cn } from "@/lib/utils";
 import { useFiltersStore, useSessionsStore } from "@/store/chat";
 

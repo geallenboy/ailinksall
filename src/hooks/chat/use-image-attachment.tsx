@@ -1,4 +1,4 @@
-import { TAttachment } from "@/types/chat.type";
+import { TAttachment } from "@/types/chat/chat.type";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowElbowDownRight, Paperclip, X } from "@phosphor-icons/react";
 import { ChangeEvent, useState } from "react";

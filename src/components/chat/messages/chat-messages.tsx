@@ -1,5 +1,5 @@
 import { useSessionsContext } from "@/context/sessions";
-import { TChatMessage } from "@/types/chat.type";
+import { TChatMessage } from "@/types/chat/chat.type";
 import { useEffect, useRef } from "react";
 import { AIMessage } from "./ai-message";
 import { HumanMessage } from "./human-message";

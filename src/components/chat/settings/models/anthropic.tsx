@@ -3,13 +3,13 @@ import { ArrowRight, Info } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useLLMTest } from "@/hooks/use-llm-test";
+import { useLLMTest } from "@/hooks/chat/use-llm-test";
 import { SettingsContainer } from "@/components/chat/settings/settings-container";
-import { usePreferenceContext } from "@/context";
+import { usePreferencesStore } from "@/store/chat";
 
 export const AnthropicSettings = () => {
   const [key, setKey] = useState<string>("");
-  const { apiKeys, updateApiKey } = usePreferenceContext();
+  const { apiKeys, updateApiKey } = usePreferencesStore();
   const { renderSaveApiKeyButton } = useLLMTest();
   useEffect(() => {
     setKey(apiKeys.anthropic || "");

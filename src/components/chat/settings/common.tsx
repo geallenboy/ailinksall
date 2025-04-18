@@ -1,6 +1,5 @@
 "use client";
-import { usePreferenceContext } from "@/context/preferences";
-import { TPreferences, defaultPreferences } from "@/hooks/use-preferences";
+
 import { ArrowClockwise, Info } from "@phosphor-icons/react";
 import { ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -11,9 +10,12 @@ import { Type } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
 import { SettingCard } from "./setting-card";
 import { SettingsContainer } from "./settings-container";
+import { usePreferencesStore } from "@/store/chat";
+import { TPreferences } from "@/types/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
 
 export const CommonSettings = () => {
-  const { preferences, updatePreferences } = usePreferenceContext();
+  const { preferences, updatePreferences } = usePreferencesStore();
 
   const renderResetToDefault = (key: keyof TPreferences) => {
     return (

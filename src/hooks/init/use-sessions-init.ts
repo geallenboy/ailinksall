@@ -1,4 +1,4 @@
-import { useChatSession } from "@/hooks";
+import { useChatSessionDB } from "@/hooks";
 import { useSessionsStore } from "@/store/chat";
 import { useParams } from "next/navigation";
 import { useEffect } from 'react';
@@ -11,7 +11,7 @@ export const useInitSessions = () => {
     const { sessionId } = useParams();
 
     // 调用useChatSession钩子获取会话数据和操作函数
-    const sessionHookProps = useChatSession(sessionId?.toString());
+    const sessionHookProps = useChatSessionDB(sessionId?.toString());
     const {
         sessionsQuery,
         createNewSessionMutation,

@@ -1,9 +1,7 @@
 "use client";
-import { usePreferenceContext } from "@/context";
 import { OpenAISettings } from "./openai";
 import { AnthropicSettings } from "./anthropic";
 import { GeminiSettings } from "./gemini";
-
 import { Flex } from "@/components/ui/flex";
 import {
   Accordion,
@@ -14,9 +12,10 @@ import {
 import { ModelIcon, ModelIconType } from "@/components/chat/model/model-icon";
 import { CheckmarkCircle02Icon, AlertCircleIcon } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
+import { usePreferencesStore } from "@/store/chat";
 
 export const ModelSettings = () => {
-  const { apiKeys } = usePreferenceContext();
+  const { apiKeys } = usePreferencesStore();
   const modelSettingsData = [
     {
       label: "OpenAI",

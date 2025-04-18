@@ -1,4 +1,4 @@
-import { TModelKey, useModelList } from "@/hooks/use-model-list";
+import { useModelList } from "@/hooks/chat/use-model-list";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModelIcon } from "./model-icon";
+import { TModelKey } from "@/types/chat";
 
 export type TModelSelect = {
   selectedModel: TModelKey;

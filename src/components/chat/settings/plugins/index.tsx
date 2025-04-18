@@ -1,4 +1,3 @@
-import { usePreferenceContext } from "@/context";
 import { WebSearchPlugin } from "./web-search";
 import { Flex } from "@/components/ui/flex";
 import {
@@ -10,8 +9,6 @@ import {
 import { ModelIcon, ModelIconType } from "@/components/chat/model/model-icon";
 
 export const PluginSettings = () => {
-  const { apiKeys } = usePreferenceContext();
-
   const pluginSettingsData = [
     {
       value: "websearch",

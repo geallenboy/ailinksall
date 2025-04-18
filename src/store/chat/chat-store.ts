@@ -1,18 +1,18 @@
 /**
  * 聊天功能状态管理
- * 基于 Zustand 实现的状态管理，负责聊天输入、消息发送和模型调用
+ * 负责聊天输入、消息发送和模型调用
  */
 "use client";
 import { create } from 'zustand';
 import { useToast } from "@/components/ui/use-toast";
-import { defaultPreferences, useChatSession, useTools } from "@/hooks";
+import { useChatSessionDB, useTools } from "@/hooks";
 import {
     TAssistant,
     TChatMessage,
     TLLMInputProps,
     TToolResponse,
-} from "@/types/chat.type";
-import { useModelList } from "@/hooks/use-model-list";
+} from "@/types/chat";
+import { useModelList } from "@/hooks/chat/use-model-list";
 import { removeExtraSpaces, sortMessages } from "@/lib/chat/helper";
 import { useEditor } from "@tiptap/react";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
@@ -26,13 +26,13 @@ import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import dayjs from "dayjs";
 import { v4 } from "uuid";
 import { useSessionsStore } from '@/store/chat/sessions-store';
-import { usePreferenceContext } from "@/context";
-import { useSettingsStore } from "@/store/chat";
+import { usePreferencesStore, useSettingsStore } from "@/store/chat";
 import type { Serialized } from "@langchain/core/load/serializable";
 
 
 // 编辑器扩展在单独文件中引入
 import { getChatEditorExtensions } from "@/config/chat/chat";
+import { defaultPreferences } from '@/config/chat/preferences';
 
 /**
  * 聊天状态接口定义
@@ -158,7 +158,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
      * 构建包含系统提示、历史消息和用户输入的提示模板
      */
     preparePrompt: async ({ context, image, history, assistant }) => {
-        const { preferences } = usePreferenceContext();
+        const { preferences } = usePreferencesStore();
         const hasPreviousMessages = history?.length > 0;
         const systemPrompt = assistant.systemPrompt;
 
@@ -219,7 +219,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const { getToolByKey } = useTools();
         const { getModelByKey, createInstance, getAssistantByKey } = useModelList();
         const { getSessionById } = useSessionsStore();
-        const { preferences, updatePreferences, apiKeys } = usePreferenceContext();
+        const { preferences, updatePreferences, apiKeys } = usePreferencesStore();
 
         // 启动生成流程
         setIsGenerating(true);
@@ -294,7 +294,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 ?.filter((p) => plugins.includes(p))
                 ?.map((p) =>
                     getToolByKey(p)?.tool({
-                        updatePreferences,
+                        updatePreferences: updatePreferences as any,
                         preferences,
                         apiKeys,
                         sendToolResponse: (arg: TToolResponse) => {
@@ -496,7 +496,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const { toast } = useToast();
         const { open: openSettings } = useSettingsStore();
         const { getAssistantByKey } = useModelList();
-        const { apiKeys } = usePreferenceContext();
+        const { apiKeys } = usePreferencesStore();
         const { refetchSessions } = useSessionsStore();
         const { setContextValue, runModel } = get();
 
@@ -544,7 +544,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     sendMessage: async () => {
         const { editor, handleRunModel, contextValue } = get();
         const { currentSession } = useSessionsStore();
-        const { preferences } = usePreferenceContext();
+        const { preferences } = usePreferencesStore();
         const { getAssistantByKey } = useModelList();
 
         if (!editor || !currentSession?.id) {
@@ -578,7 +578,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     generateTitleForSession: async (sessionId: string) => {
         const { getSessionById } = useSessionsStore();
         const { getAssistantByKey } = useModelList();
-        const { preferences, apiKeys } = usePreferenceContext();
+        const { preferences, apiKeys } = usePreferencesStore();
         const { createInstance } = useModelList();
 
         const session = await getSessionById(sessionId);
@@ -612,7 +612,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         ]);
 
         try {
-            const { updateSessionMutation } = useChatSession();
+            const { updateSessionMutation } = useChatSessionDB();
             const prompt = await template.formatMessages({
                 message: [new HumanMessage(firstMessage.rawHuman)],
             });

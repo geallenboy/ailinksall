@@ -4,9 +4,9 @@ import { v4 } from "uuid";
 
 import { sortSessions } from "@/lib/chat/helper";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { TChatMessage, TChatSession } from "@/types/chat.type";
+import { TChatMessage, TChatSession } from "@/types/chat/chat.type";
 
-export const useChatSession = (id?: string) => {
+export const useChatSessionDB = (id?: string) => {
   const getSessions = async (): Promise<TChatSession[]> => {
     return (await get("chat-sessions")) || [];
   };
@@ -32,11 +32,11 @@ export const useChatSession = (id?: string) => {
             ...session,
             messages: isExistingMessage
               ? session.messages.map((m) => {
-                  if (m.id === chatMessage.id) {
-                    return { ...m, ...chatMessage };
-                  }
-                  return m;
-                })
+                if (m.id === chatMessage.id) {
+                  return { ...m, ...chatMessage };
+                }
+                return m;
+              })
               : [...session.messages, chatMessage],
           };
         }

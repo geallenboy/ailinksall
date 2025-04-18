@@ -1,7 +1,7 @@
 import hljs from "highlight.js";
 import { useEffect, useRef } from "react";
 
-import { useClipboard } from "@/hooks/use-clipboard";
+import { useClipboard } from "@/hooks/chat/use-clipboard";
 import { Copy01Icon, Tick01Icon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";

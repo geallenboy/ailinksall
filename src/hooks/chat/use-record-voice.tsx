@@ -1,24 +1,23 @@
 "use client";
 import { blobToBase64 } from "@/lib/chat/record";
 import { OpenAI, toFile } from "openai";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { usePreferenceContext } from "@/context";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { AudioWaveSpinner } from "@/components/ui/audio-wave";
 import { RecordIcon, StopIcon } from "@hugeicons/react";
-import { useSettingsStore } from "@/store/chat";
+import { usePreferencesStore, useSettingsStore } from "@/store/chat";
 
 export const useRecordVoice = () => {
   const [text, setText] = useState<string>("");
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const { preferences } = usePreferenceContext();
+  const { preferences, apiKeys } = usePreferencesStore();
   const { open: openSettings } = useSettingsStore();
   const { toast } = useToast();
-  const { apiKeys } = usePreferenceContext();
+
   const [recording, setRecording] = useState<boolean>(false);
   const [transcribing, setIsTranscribing] = useState<boolean>(false);
 
