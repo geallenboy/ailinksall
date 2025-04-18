@@ -6,7 +6,7 @@ import { usePreferenceContext } from "@/context/preferences";
 import { googleSearchTool } from "@/lib/chat/tools/google";
 import { duckduckGoTool } from "@/lib/chat/tools/duckduckgo";
 import { dalleTool } from "@/lib/chat/tools/dalle";
-import { useSettingsContext } from "@/context";
+
 import {
   GlobalSearchIcon,
   HugeiconsProps,
@@ -15,6 +15,7 @@ import {
 } from "@hugeicons/react";
 import { TToolResponse } from "@/types/chat.type";
 import { memoryTool } from "@/lib/chat/tools/memory";
+import { useSettingsStore } from "@/store/chat/settings-store";
 
 export const toolKeys = ["calculator", "web_search"];
 export type TToolKey = (typeof toolKeys)[number];
@@ -46,7 +47,7 @@ export type TTool = {
 
 export const useTools = () => {
   const { preferences, updatePreferences, apiKeys } = usePreferenceContext();
-  const { open } = useSettingsContext();
+  const { open } = useSettingsStore();
   const tools: TTool[] = [
     {
       key: "web_search",

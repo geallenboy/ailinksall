@@ -32,11 +32,8 @@ import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import dayjs from "dayjs";
 import { createContext, useContext, useEffect, useState } from "react";
 import { v4 } from "uuid";
-import {
-  useSessionsContext,
-  usePreferenceContext,
-  useSettingsContext,
-} from "@/context";
+import { useSessionsContext, usePreferenceContext } from "@/context";
+import { useSettingsStore } from "@/store/chat";
 
 export type TChatContext = {
   editor: ReturnType<typeof useEditor>;
@@ -74,7 +71,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
   const { getAssistantByKey } = useModelList();
   const [openPromptsBotCombo, setOpenPromptsBotCombo] = useState(false);
   const [contextValue, setContextValue] = useState("");
-  const { open: openSettings } = useSettingsContext();
+  const { open: openSettings } = useSettingsStore();
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentMessage, setCurrentMessage] = useState<TChatMessage>();
   const [currentTools, setCurrentTools] = useState<TToolResponse[]>([]);

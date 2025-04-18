@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { TBaseModel, useModelList } from "./use-model-list";
 import { useToast } from "@/components/ui/use-toast";

@@ -4,11 +4,11 @@ import { OpenAI, toFile } from "openai";
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { usePreferenceContext } from "@/context";
-import { useSettingsContext } from "@/context";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { AudioWaveSpinner } from "@/components/ui/audio-wave";
 import { RecordIcon, StopIcon } from "@hugeicons/react";
+import { useSettingsStore } from "@/store/chat";
 
 export const useRecordVoice = () => {
   const [text, setText] = useState<string>("");
@@ -16,7 +16,7 @@ export const useRecordVoice = () => {
     null
   );
   const { preferences } = usePreferenceContext();
-  const { open: openSettings } = useSettingsContext();
+  const { open: openSettings } = useSettingsStore();
   const { toast } = useToast();
   const { apiKeys } = usePreferenceContext();
   const [recording, setRecording] = useState<boolean>(false);

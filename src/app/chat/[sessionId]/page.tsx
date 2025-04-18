@@ -23,8 +23,8 @@ const ChatSessionPage = () => {
       {isLoading && renderLoader()}
       {!isLoading && (
         <>
-          <ChatMessages />
-          <ChatInput />
+          {/* <ChatMessages /> */}
+          {/* <ChatInput /> */}
         </>
       )}
     </div>

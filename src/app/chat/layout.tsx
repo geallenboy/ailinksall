@@ -7,7 +7,7 @@ import { FiltersProvider } from "@/context/filters";
 import { PreferenceProvider } from "@/context/preferences";
 import { PromptsProvider } from "@/context/prompts";
 import { SessionsProvider } from "@/context/sessions";
-import { SettingsProvider } from "@/context/settings";
+
 import React from "react";
 
 export default function ChatLayout({
@@ -20,17 +20,15 @@ export default function ChatLayout({
       <ConfirmProvider>
         <PreferenceProvider>
           <SessionsProvider>
-            <SettingsProvider>
-              <ChatProvider>
-                <FiltersProvider>
-                  <AssistantsProvider>
-                    <PromptsProvider>
-                      <MainLayout>{children}</MainLayout>
-                    </PromptsProvider>
-                  </AssistantsProvider>
-                </FiltersProvider>
-              </ChatProvider>
-            </SettingsProvider>
+            <ChatProvider>
+              <FiltersProvider>
+                <AssistantsProvider>
+                  <PromptsProvider>
+                    <MainLayout>{children}</MainLayout>
+                  </PromptsProvider>
+                </AssistantsProvider>
+              </FiltersProvider>
+            </ChatProvider>
           </SessionsProvider>
         </PreferenceProvider>
       </ConfirmProvider>

@@ -1,3 +1,4 @@
+"use client";
 import { usePreferenceContext } from "@/context";
 import { OpenAISettings } from "./openai";
 import { AnthropicSettings } from "./anthropic";

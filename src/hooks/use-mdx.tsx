@@ -33,7 +33,6 @@ export const useMarkdown = () => {
       renderer={{
         text: (children) => (
           <motion.span
-            key={crypto.randomUUID()}
             variants={REVEAL_ANIMATION_VARIANTS}
             animate={"visible"}
             initial={animate ? "hidden" : "visible"}
@@ -42,10 +41,7 @@ export const useMarkdown = () => {
           </motion.span>
         ),
         table: (children) => (
-          <div
-            key={crypto.randomUUID()}
-            className="overflow-x-auto my-3 border border-zinc-100 rounded-xl dark:border-white/10"
-          >
+          <div className="overflow-x-auto my-3 border border-zinc-100 rounded-xl dark:border-white/10">
             <table className="w-full overflow-hidden text-sm md:text-base text-left rtl:text-right text-gray-600 dark:text-gray-200">
               {children}
             </table>
@@ -53,49 +49,28 @@ export const useMarkdown = () => {
         ),
         tableHeader(children) {
           return (
-            <thead
-              key={crypto.randomUUID()}
-              className="text-sm md:text-base w-full font-medium text-zinc-800 uppercase bg-zinc-50 dark:bg-white/10 dark:text-white/20"
-            >
+            <thead className="text-sm md:text-base w-full font-medium text-zinc-800 uppercase bg-zinc-50 dark:bg-white/10 dark:text-white/20">
               {children}
             </thead>
           );
         },
         tableRow(children) {
           return (
-            <tr
-              key={crypto.randomUUID()}
-              className="hover:bg-zinc-50 dark:bg-white/5"
-            >
-              {children}
-            </tr>
+            <tr className="hover:bg-zinc-50 dark:bg-white/5">{children}</tr>
           );
         },
         tableCell(children, flags) {
           if (flags.header) {
-            return (
-              <th
-                key={crypto.randomUUID()}
-                className="p-3 text-sm md:text-base"
-              >
-                {children}
-              </th>
-            );
+            return <th className="p-3 text-sm md:text-base">{children}</th>;
           }
-          return (
-            <td key={crypto.randomUUID()} className="p-3 text-sm md:text-base">
-              {children}
-            </td>
-          );
+          return <td className="p-3 text-sm md:text-base">{children}</td>;
         },
-        tableBody: (children) => (
-          <tbody key={crypto.randomUUID()}>{children}</tbody>
-        ),
-        paragraph: (children) => <p key={crypto.randomUUID()}>{children}</p>,
-        em: (children) => <em key={crypto.randomUUID()}>{children}</em>,
+        tableBody: (children) => <tbody>{children}</tbody>,
+        paragraph: (children) => <p>{children}</p>,
+        em: (children) => <em>{children}</em>,
         heading: (children, level) => {
           const Heading = `h${level}` as any;
-          return <Heading key={crypto.randomUUID()}>{children}</Heading>;
+          return <Heading>{children}</Heading>;
         },
         link: (href, text) => {
           if (text && href) {
@@ -133,44 +108,34 @@ export const useMarkdown = () => {
           return <></>;
         },
         blockquote: (children) => (
-          <blockquote key={crypto.randomUUID()}>
+          <blockquote>
             <p>{children}</p>
           </blockquote>
         ),
         list: (children, ordered) =>
           ordered ? (
-            <ol key={crypto.randomUUID()}>
+            <ol>
               {React.Children.map(children, (child, i) => (
                 <li key={i}>{child}</li>
               ))}
             </ol>
           ) : (
-            <ul key={crypto.randomUUID()}>
+            <ul>
               {React.Children.map(children, (child, i) => (
                 <li key={i}>{child}</li>
               ))}
             </ul>
           ),
-        listItem: (children) => <p key={crypto.randomUUID()}>{children}</p>,
-        strong: (children) => (
-          <strong key={crypto.randomUUID()}>{children}</strong>
-        ),
-        hr: () => (
-          <hr
-            key={crypto.randomUUID()}
-            className="my-4 border-gray-100 dark:border-white/10"
-          />
-        ),
+        listItem: (children) => <p>{children}</p>,
+        strong: (children) => <strong>{children}</strong>,
+        hr: () => <hr className="my-4 border-gray-100 dark:border-white/10" />,
         code: (code, lang) => (
-          <div
-            key={crypto.randomUUID()}
-            className="my-4 w-full flex-shrink-0 not-prose"
-          >
+          <div className="my-4 w-full flex-shrink-0 not-prose">
             <CodeBlock lang={lang} code={code?.toString()} />
           </div>
         ),
         image: () => <></>, // 禁用图片
-        br: () => <br key={crypto.randomUUID()} />,
+        br: () => <br />,
         codespan: (code) => (
           <span
             key={messageId + "-codespan-" + code}

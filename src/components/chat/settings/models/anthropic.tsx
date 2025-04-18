@@ -1,3 +1,4 @@
+"use client";
 import { ArrowRight, Info } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";

@@ -1,4 +1,3 @@
-import { useSettingsContext } from "@/context";
 import { usePreferenceContext } from "@/context/preferences";
 import { useSessionsContext } from "@/context/sessions";
 import { TPreferences, defaultPreferences } from "@/hooks/use-preferences";
@@ -13,6 +12,7 @@ import { PopOverConfirmProvider } from "@/components/ui/use-confirm-popover";
 import { useToast } from "@/components/ui/use-toast";
 import { SettingCard } from "./setting-card";
 import { SettingsContainer } from "./settings-container";
+import { useSettingsStore } from "@/store/chat";
 
 const apiSchema = z.object({
   openai: z.string().optional(),
@@ -100,7 +100,7 @@ const importSchema = z.object({
 });
 
 export const Data = () => {
-  const { dismiss } = useSettingsContext();
+  const { dismiss } = useSettingsStore();
   const { toast } = useToast();
 
   const {

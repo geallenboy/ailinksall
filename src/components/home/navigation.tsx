@@ -8,7 +8,7 @@ import NavItemsRight from "./nav-items.right";
 
 const Navigtion = () => {
   return (
-    <div className="w-full bg-background/60 backdrop-blur-md fixed top-0 px-8 py-4 z-50 shadow-xl overflow-hidden">
+    <div className="w-full backdrop-blur-md fixed top-0 px-8 py-4 z-50 shadow-xl overflow-hidden">
       <header className="contariner mx-auto flex items-center ">
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center justify-center gap-6">

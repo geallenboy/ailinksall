@@ -1,3 +1,4 @@
+"use client";
 import { usePreferenceContext } from "@/context/preferences";
 import { TPreferences, defaultPreferences } from "@/hooks/use-preferences";
 import { ArrowClockwise, Info } from "@phosphor-icons/react";
