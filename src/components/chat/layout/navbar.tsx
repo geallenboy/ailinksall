@@ -1,5 +1,5 @@
 "use client";
-import { usePromptsContext, useSessionsContext } from "@/context";
+import { useSessionsContext } from "@/context";
 import {
   Moon02Icon,
   MoreHorizontalIcon,
@@ -21,11 +21,12 @@ import {
 import { Flex } from "@/components/ui/flex";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useSettingsStore } from "@/store/chat/settings-store";
+import { usePromptsStore } from "@/store/chat";
 
 export const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const { open: openSettings } = useSettingsStore();
-  const { open: openPrompts } = usePromptsContext();
+  const { open: openPrompts } = usePromptsStore();
   const [isOpen, setIsOpen] = useState(false);
   const { createSession } = useSessionsContext();
 
