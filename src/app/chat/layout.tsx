@@ -2,7 +2,6 @@ import { MainLayout } from "@/components/chat/layout/main-layout";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AssistantsProvider } from "@/context/assistant";
 import { ChatProvider } from "@/context/chat";
-import { ConfirmProvider } from "@/context/confirm";
 import { FiltersProvider } from "@/context/filters";
 import { PreferenceProvider } from "@/context/preferences";
 import { PromptsProvider } from "@/context/prompts";
@@ -17,21 +16,19 @@ export default function ChatLayout({
 }>) {
   return (
     <TooltipProvider>
-      <ConfirmProvider>
-        <PreferenceProvider>
-          <SessionsProvider>
-            <ChatProvider>
-              <FiltersProvider>
-                <AssistantsProvider>
-                  <PromptsProvider>
-                    <MainLayout>{children}</MainLayout>
-                  </PromptsProvider>
-                </AssistantsProvider>
-              </FiltersProvider>
-            </ChatProvider>
-          </SessionsProvider>
-        </PreferenceProvider>
-      </ConfirmProvider>
+      <PreferenceProvider>
+        <SessionsProvider>
+          <ChatProvider>
+            <FiltersProvider>
+              <AssistantsProvider>
+                <PromptsProvider>
+                  <MainLayout>{children}</MainLayout>
+                </PromptsProvider>
+              </AssistantsProvider>
+            </FiltersProvider>
+          </ChatProvider>
+        </SessionsProvider>
+      </PreferenceProvider>
     </TooltipProvider>
   );
 }

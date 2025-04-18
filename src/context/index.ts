@@ -1,6 +1,5 @@
 export * from "./assistant";
 export * from "./chat";
-export * from "./confirm";
 export * from "./filters";
 export * from "./preferences";
 export * from "./prompts";

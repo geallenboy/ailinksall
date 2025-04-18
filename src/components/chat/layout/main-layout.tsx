@@ -2,6 +2,7 @@
 
 import { Toaster } from "@/components/ui/toaster";
 import { SettingsDialog } from "@/components/chat/settings/settings-dialog";
+import { ConfirmDialog } from "@/components/public/confirm-dialog";
 
 export type MainLayoutProps = {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
       {children}
       <Toaster />
       <SettingsDialog />
+      <ConfirmDialog />
     </div>
   );
 };

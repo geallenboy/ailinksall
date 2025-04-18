@@ -1,2 +1,2 @@
 
-export * from "./settings-store"
+export * from "../chat/settings-store"
