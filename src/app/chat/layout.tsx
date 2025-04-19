@@ -1,10 +1,7 @@
 import { MainLayout } from "@/components/chat/layout/main-layout";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AssistantsProvider } from "@/context/assistant";
 import { ChatProvider } from "@/context/chat";
-
 import { SessionsProvider } from "@/context/sessions";
-
 import React from "react";
 
 export default function ChatLayout({
@@ -16,9 +13,7 @@ export default function ChatLayout({
     <TooltipProvider>
       <SessionsProvider>
         <ChatProvider>
-          <AssistantsProvider>
-            <MainLayout>{children}</MainLayout>
-          </AssistantsProvider>
+          <MainLayout>{children}</MainLayout>
         </ChatProvider>
       </SessionsProvider>
     </TooltipProvider>

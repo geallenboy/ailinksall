@@ -4,11 +4,7 @@ import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import {
-  useAssistantContext,
-  useChatContext,
-  useSessionsContext,
-} from "@/context";
+import { useChatContext, useSessionsContext } from "@/context";
 import { useModelList, useRecordVoice, useScrollToBottom } from "@/hooks";
 import { ArrowDown02Icon, Navigation03Icon } from "@hugeicons/react";
 import { TAssistant } from "@/types/chat";
@@ -20,8 +16,9 @@ import { PluginSelect } from "@/components/chat/plugin-select";
 import { PromptsBotsCombo } from "@/components/chat/prompts-bots-combo";
 import { QuickSettings } from "@/components/chat/quick-settings";
 import { Button } from "@/components/ui/button";
-import { usePreferencesStore } from "@/store/chat";
+import { useAssistantStore, usePreferencesStore } from "@/store/chat";
 import { defaultPreferences } from "@/config/chat/preferences";
+import { useAssistantQuery } from "@/hooks/chat/use-assistant-query";
 
 export type TAttachment = {
   file?: File;
@@ -39,7 +36,8 @@ export const ChatInput = () => {
     transcribing,
   } = useRecordVoice();
   const { currentSession } = useSessionsContext();
-  const { selectedAssistant, open: openAssistants } = useAssistantContext();
+  const { open: openAssistants } = useAssistantStore();
+  const { selectedAssistant } = useAssistantQuery();
   const {
     editor,
     handleRunModel,
