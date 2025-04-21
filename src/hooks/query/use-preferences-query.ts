@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { TApiKeys, TBaseModel, TPreferences } from "@/types/chat";
 import { defaultPreferences } from "@/config/chat/preferences";
 
-export const usePreferencesDB = () => {
+export const usePreferencesQuery = () => {
   const preferencesQuery = useQuery({
     queryKey: ["preferences"],
     queryFn: () => getPreferences(),

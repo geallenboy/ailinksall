@@ -16,11 +16,12 @@ import {
 } from "@/components/ui/command";
 import { useModelList } from "@/hooks/chat/use-model-list";
 import { cn } from "@/lib/utils";
-import { useFiltersStore, useSessionsStore } from "@/store/chat";
+import { useFiltersStore } from "@/store/chat";
 
 import { sortSessions } from "@/lib/chat/helper";
 import { useFilterActions } from "@/hooks/chat/use-filter-actions";
 import { useFilterKeyboardShortcut } from "@/hooks/chat/use-filter-keyboard-shortcut";
+import { useSessionHooks } from "@/hooks/chat";
 
 /**
  * 过滤器对话框组件
@@ -31,7 +32,7 @@ export const FilterDialog = () => {
   const { isFilterOpen, open: setIsFilterOpen, dismiss } = useFiltersStore();
 
   // 获取会话数据
-  const { sessions, currentSession } = useSessionsStore();
+  const { sessions, currentSession } = useSessionHooks();
 
   // 获取模型和助手数据
   const { getModelByKey, getAssistantByKey } = useModelList();

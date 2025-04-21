@@ -15,11 +15,12 @@ import { Type } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { CreateAssistant } from "@/components/chat/assistants/create-assistant";
 import { AssistantItem } from "@/components/chat/assistants/assistant-item";
-import { useAssistantQuery } from "@/hooks/chat/use-assistant-query";
-import { usePreferencesStore } from "@/store/chat";
+import { useAssistant } from "@/hooks/chat/use-assistant";
 import { defaultPreferences } from "@/config/chat/preferences";
 import { useEffect } from "react";
 import { TAssistant } from "@/types/chat";
+import { useAssistantsQuery } from "@/hooks";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 /**
  * 助手选择对话框组件
@@ -31,21 +32,21 @@ export function AssistantDialog() {
     openCreateAssistant,
     updateAssistant,
     selectedAssistantKey,
-    assistants,
     searchRef,
     dismiss,
     setOpenCreateAssistant,
     setUpdateAssistant,
     setSelectedAssistantKey,
     getAssistantsByType,
-    getAssistantByKey,
+  } = useAssistant();
+  const {
     createAssistantMutation,
     updateAssistantMutation,
     deleteAssistantMutation,
-  } = useAssistantQuery();
+  } = useAssistantsQuery();
 
   // 获取偏好设置
-  const { updatePreferences } = usePreferencesStore();
+  const { updatePreferences } = usePreferenceHooks();
 
   // 当助手对话框打开时，聚焦搜索框
   useEffect(() => {

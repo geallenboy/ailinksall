@@ -14,12 +14,12 @@ import { Flex } from "@/components/ui/flex";
 import { Type } from "@/components/ui/text";
 import { Settings03Icon } from "@hugeicons/react";
 import { TPreferences } from "@/types/chat";
-import { usePreferencesStore } from "@/store/chat";
 import { defaultPreferences } from "@/config/chat/preferences";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 export const QuickSettings = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { preferences, updatePreferences } = usePreferencesStore();
+  const { preferences, updatePreferences } = usePreferenceHooks();
   const { getModelByKey, getAssistantByKey } = useModelList();
 
   const renderResetToDefault = (key: keyof TPreferences) => {

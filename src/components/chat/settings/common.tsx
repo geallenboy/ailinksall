@@ -10,12 +10,12 @@ import { Type } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
 import { SettingCard } from "./setting-card";
 import { SettingsContainer } from "./settings-container";
-import { usePreferencesStore } from "@/store/chat";
 import { TPreferences } from "@/types/chat";
 import { defaultPreferences } from "@/config/chat/preferences";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 export const CommonSettings = () => {
-  const { preferences, updatePreferences } = usePreferencesStore();
+  const { preferences, updatePreferences } = usePreferenceHooks();
 
   const renderResetToDefault = (key: keyof TPreferences) => {
     return (

@@ -4,7 +4,7 @@ import { get, set } from "idb-keyval";
 import { TAssistant } from "@/types/chat";
 import { v4 } from "uuid";
 
-export const useAssistantsDB = () => {
+export const useAssistantsQuery = () => {
     const getAssistants = async (): Promise<TAssistant[]> => {
         return (await get("assistants")) || [];
     };

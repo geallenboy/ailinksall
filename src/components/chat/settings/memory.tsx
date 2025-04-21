@@ -1,9 +1,9 @@
-import { usePreferencesStore } from "@/store/chat";
+import { usePreferenceHooks } from "@/hooks/chat";
 import { SettingCard } from "./setting-card";
 import { SettingsContainer } from "./settings-container";
 
 export const MemorySettings = () => {
-  const { preferences } = usePreferencesStore();
+  const { preferences } = usePreferenceHooks();
 
   const renderMemory = (memory: string) => {
     return (

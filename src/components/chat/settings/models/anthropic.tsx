@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLLMTest } from "@/hooks/chat/use-llm-test";
 import { SettingsContainer } from "@/components/chat/settings/settings-container";
-import { usePreferencesStore } from "@/store/chat";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 export const AnthropicSettings = () => {
   const [key, setKey] = useState<string>("");
-  const { apiKeys, updateApiKey } = usePreferencesStore();
+  const { apiKeys, updateApiKey } = usePreferenceHooks();
   const { renderSaveApiKeyButton } = useLLMTest();
   useEffect(() => {
     setKey(apiKeys.anthropic || "");

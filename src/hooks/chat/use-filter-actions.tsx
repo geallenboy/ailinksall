@@ -6,9 +6,10 @@ import {
   Moon02Icon,
   Sun03Icon,
 } from "@hugeicons/react";
-import { useFiltersStore, useSessionsStore } from "@/store/chat";
+import { useFiltersStore, useSessionStore } from "@/store/chat";
 import { Button } from "@/components/ui/button";
-import { useChatSessionDB } from "../db/use-chat-session";
+import { useChatSessionQuery } from "../query/use-chat-session-query";
+import { useSessionHooks } from "./use-session-hooks";
 /**
  * 构建过滤器动作项，包括新建会话、切换主题、删除当前会话
  * 抽离为独立函数以便在不同组件中复用
@@ -16,10 +17,10 @@ import { useChatSessionDB } from "../db/use-chat-session";
 export const useFilterActions = () => {
   // 获取系统主题设置
   const { theme, setTheme } = useTheme();
-  const { removeSessionMutation } = useChatSessionDB();
+  const { removeSessionMutation } = useChatSessionQuery();
   // 获取会话相关操作
-  const { createSession, currentSession } = useSessionsStore();
-
+  const { currentSession } = useSessionStore();
+  const { createSession } = useSessionHooks();
   // 获取提示通知功能
   const { toast, dismiss: dismissToast } = useToast();
 

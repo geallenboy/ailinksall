@@ -3,11 +3,7 @@ import { EditorContent } from "@tiptap/react";
 import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-
-import { useChatContext, useSessionsContext } from "@/context";
-import { useModelList, useRecordVoice, useScrollToBottom } from "@/hooks";
 import { ArrowDown02Icon, Navigation03Icon } from "@hugeicons/react";
-import { TAssistant } from "@/types/chat";
 import { slideUpVariant } from "@/lib/chat/framer-motion";
 import { cn } from "@/lib/utils";
 import { ChatExamples } from "@/components/chat/chat/chat-examples";
@@ -16,9 +12,17 @@ import { PluginSelect } from "@/components/chat/plugin-select";
 import { PromptsBotsCombo } from "@/components/chat/prompts-bots-combo";
 import { QuickSettings } from "@/components/chat/quick-settings";
 import { Button } from "@/components/ui/button";
-import { useAssistantStore, usePreferencesStore } from "@/store/chat";
+import { useModelList, useRecordVoice, useScrollToBottom } from "@/hooks";
+import {
+  useAssistantStore,
+  usePreferenceStore,
+  useSessionStore,
+} from "@/store/chat";
+import { useAssistant } from "@/hooks/chat/use-assistant";
+import { useChatHooks } from "@/hooks/chat/use-chat-hooks";
+import { usePreferenceHooks } from "@/hooks/chat";
+import { TAssistant } from "@/types/chat";
 import { defaultPreferences } from "@/config/chat/preferences";
-import { useAssistantQuery } from "@/hooks/chat/use-assistant-query";
 
 export type TAttachment = {
   file?: File;
@@ -35,9 +39,9 @@ export const ChatInput = () => {
     text,
     transcribing,
   } = useRecordVoice();
-  const { currentSession } = useSessionsContext();
+  const { currentSession } = useSessionStore();
   const { open: openAssistants } = useAssistantStore();
-  const { selectedAssistant } = useAssistantQuery();
+  const { selectedAssistant } = useAssistant();
   const {
     editor,
     handleRunModel,
@@ -48,9 +52,10 @@ export const ChatInput = () => {
     contextValue,
     setContextValue,
     stopGeneration,
-  } = useChatContext();
+  } = useChatHooks();
 
-  const { preferences, updatePreferences } = usePreferencesStore();
+  const { preferences } = usePreferenceStore();
+  const { updatePreferences } = usePreferenceHooks();
   const { models, getAssistantByKey, getAssistantIcon } = useModelList();
 
   const inputRef = useRef<HTMLTextAreaElement>(null);

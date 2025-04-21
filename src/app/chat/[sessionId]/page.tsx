@@ -1,12 +1,12 @@
 "use client";
 import { ChatInput } from "@/components/chat/chat/chat-input";
-import { ChatMessages } from "@/components/chat/messages/chat-messages";
 import { Navbar } from "@/components/chat/layout/navbar";
+import { ChatMessages } from "@/components/chat/messages/chat-messages";
 import Spinner from "@/components/ui/loading-spinner";
-import { useSessionsContext } from "@/context";
+import { useSessionStore } from "@/store/chat";
 
 const ChatSessionPage = () => {
-  const { isCurrentSessionLoading, isAllSessionLoading } = useSessionsContext();
+  const { isCurrentSessionLoading, isAllSessionLoading } = useSessionStore();
 
   const renderLoader = () => {
     return (
@@ -23,7 +23,7 @@ const ChatSessionPage = () => {
       {isLoading && renderLoader()}
       {!isLoading && (
         <>
-          {/* <ChatMessages /> */}
+          <ChatMessages />
           <ChatInput />
         </>
       )}

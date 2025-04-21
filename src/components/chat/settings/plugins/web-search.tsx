@@ -13,11 +13,11 @@ import {
 import { SettingCard } from "@/components/chat/settings/setting-card";
 import { Flex } from "@/components/ui/flex";
 import { Type } from "@/components/ui/text";
-import { usePreferencesStore } from "@/store/chat";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 export const WebSearchPlugin = () => {
   const { toast } = useToast();
-  const { preferences, updatePreferences } = usePreferencesStore();
+  const { preferences, updatePreferences } = usePreferenceHooks();
 
   const handleRunTest = async () => {
     try {

@@ -2,18 +2,17 @@ import { ModelIcon } from "@/components/chat/icons/model-icon";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenAI } from "@langchain/openai";
-
 import { useQuery } from "@tanstack/react-query";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
 import { useMemo } from "react";
-import { useAssistantsDB } from "../db/use-assistants";
-import { usePreferencesStore } from "@/store/chat";
+import { useAssistantsQuery } from "../query/use-assistants-query";
 import { defaultPreferences } from "@/config/chat/preferences";
 import { TAssistant, TBaseModel, TModel, TModelKey } from "@/types/chat";
+import { usePreferenceStore } from "@/store/chat";
 
 export const useModelList = () => {
-  const { preferences } = usePreferencesStore();
-  const assistantsProps = useAssistantsDB();
+  const { preferences } = usePreferenceStore();
+  const assistantsProps = useAssistantsQuery();
   const ollamaModelsQuery = useQuery({
     queryKey: ["ollama-models"],
     queryFn: () =>

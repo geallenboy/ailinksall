@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useModelList } from "./use-model-list";
 import { useToast } from "@/components/ui/use-toast";
-import { usePreferencesDB } from "../db/use-preferences";
+import { usePreferencesQuery } from "../query/use-preferences-query";
 import { Button } from "@/components/ui/button";
 import { TBaseModel } from "@/types/chat";
 
@@ -13,7 +13,7 @@ export const useLLMTest = () => {
 
   const { toast } = useToast();
 
-  const { getApiKey } = usePreferencesDB();
+  const { getApiKey } = usePreferencesQuery();
 
   const testLLM = async (model: TBaseModel, apiKey?: string) => {
     try {
@@ -33,7 +33,7 @@ export const useLLMTest = () => {
 
       const data = await selectedModel
         .withListeners({
-          onError: (error) => {
+          onError: (error: any) => {
             console.error("error", error);
           },
         })
@@ -43,7 +43,7 @@ export const useLLMTest = () => {
         .invoke("This is a test message", {
           callbacks: [
             {
-              handleLLMError: (error) => {
+              handleLLMError: (error: any) => {
                 console.error("lll", error);
                 throw new Error(error);
               },

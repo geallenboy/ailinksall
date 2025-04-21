@@ -1,72 +1,75 @@
-import { create } from 'zustand';
+import { create } from "zustand";
+import { TApiKeys, TBaseModel, TPreferences } from "@/types/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
 
-import { TApiKeys, TPreferences, TBaseModel } from '@/types/chat';
-import { defaultPreferences } from '@/config/chat/preferences';
-
-
-// 定义Zustand store的状态类型
-interface PreferencesState {
-    // 状态
-    preferences: TPreferences;
-    apiKeys: TApiKeys;
-
-    // 操作方法
-    setPreferences: (preferences: TPreferences) => void;
-    setApiKeys: (apiKeys: TApiKeys) => void;
-    updatePreferences: (
-        newPreferences: Partial<TPreferences>,
-        onSuccess?: (preference: TPreferences) => void
-    ) => void;
-    updateApiKey: (key: TBaseModel, value: string) => void;
-    updateApiKeys: (newApiKeys: TApiKeys) => void;
-
-    // 初始化标志
-    isPreferencesInitialized: boolean;
-    isApiKeysInitialized: boolean;
-    setPreferencesInitialized: (initialized: boolean) => void;
-    setApiKeysInitialized: (initialized: boolean) => void;
+// 定义用于外部传入的服务类型
+export interface IPreferenceService {
+    getPreferences: () => Promise<TPreferences | null>;
+    getApiKeys: () => Promise<TApiKeys | null>;
+    setPreferences: (preferences: Partial<TPreferences>) => Promise<void>;
+    setApiKey: (key: TBaseModel, value: string) => Promise<void>;
+    resetToDefaults: () => Promise<void>;
 }
 
-// 创建Zustand store
-export const usePreferencesStore = create<PreferencesState>((set, get) => ({
-    // 初始状态
+interface PreferenceState {
+    preferences: TPreferences;
+    apiKeys: TApiKeys;
+    isLoaded: boolean;
+    setPreferences: (newPreferences: Partial<TPreferences>) => void;
+    setApiKey: (key: TBaseModel, value: string) => void;
+    setApiKeys: (newApiKeys: TApiKeys) => void;
+    initialize: (service: IPreferenceService) => Promise<void>;
+    resetToDefaults: (service: IPreferenceService) => Promise<void>;
+}
+
+export const usePreferenceStore = create<PreferenceState>()((set) => ({
     preferences: defaultPreferences,
     apiKeys: {},
-    isPreferencesInitialized: false,
-    isApiKeysInitialized: false,
+    isLoaded: false,
 
-    // 设置方法
-    setPreferences: (preferences) => set({ preferences }),
-    setApiKeys: (apiKeys) => set({ apiKeys }),
-    setPreferencesInitialized: (initialized) => set({ isPreferencesInitialized: initialized }),
-    setApiKeysInitialized: (initialized) => set({ isApiKeysInitialized: initialized }),
+    // 从外部服务初始化 store
+    initialize: async (service: IPreferenceService) => {
+        try {
+            const storedPreferences = await service.getPreferences();
+            const storedApiKeys = await service.getApiKeys();
 
-    // 更新偏好设置
-    updatePreferences: (newPreferences, onSuccess) => {
-        const currentState = get();
-        // 先更新本地状态
-        const updatedPreferences = { ...currentState.preferences, ...newPreferences };
-        set({ preferences: updatedPreferences });
-
-        // 使用react-query中的mutation更新服务器数据
-        // 注意: 这里我们需要在组件中处理实际的mutation调用
-        // 因为Zustand store是存储状态的地方，而不是执行异步操作的地方
-
-        // 成功回调会在usePreferencesHook中处理
-        if (onSuccess) {
-            onSuccess(updatedPreferences);
+            set({
+                preferences: storedPreferences ? { ...defaultPreferences, ...storedPreferences } : defaultPreferences,
+                apiKeys: storedApiKeys || {},
+                isLoaded: true
+            });
+        } catch (error) {
+            console.error("Failed to initialize preference store:", error);
+            set({ isLoaded: true });
         }
     },
 
-    // 更新单个API key
-    updateApiKey: (key, value) => {
-        const currentState = get();
-        set({ apiKeys: { ...currentState.apiKeys, [key]: value } });
-        // 实际的mutation调用将在hook中处理
+    // 仅更新本地状态（不涉及外部服务调用）
+    setPreferences: (newPreferences) => {
+        set((state) => ({
+            preferences: { ...state.preferences, ...newPreferences }
+        }));
     },
 
-    // 批量更新API keys
-    updateApiKeys: (newApiKeys) => {
+    // 仅更新本地状态
+    setApiKey: (key, value) => {
+        set((state) => ({
+            apiKeys: { ...state.apiKeys, [key]: value }
+        }));
+    },
+
+    // 仅更新本地状态
+    setApiKeys: (newApiKeys) => {
         set({ apiKeys: newApiKeys });
+    },
+
+    // 重置状态（需要外部服务）
+    resetToDefaults: async (service: IPreferenceService) => {
+        try {
+            await service.resetToDefaults();
+            set({ preferences: defaultPreferences });
+        } catch (error) {
+            console.error("Failed to reset preferences:", error);
+        }
     },
 }));

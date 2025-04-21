@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLLMTest } from "@/hooks/chat/use-llm-test";
 import { Flex } from "@/components/ui/flex";
-import { usePreferencesStore } from "@/store/chat";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 export const OpenAISettings = () => {
   const [key, setKey] = useState<string>("");
-  const { apiKeys, updateApiKey } = usePreferencesStore();
+  const { apiKeys, updateApiKey } = usePreferenceHooks();
   const { renderSaveApiKeyButton } = useLLMTest();
   useEffect(() => {
     setKey(apiKeys.openai || "");

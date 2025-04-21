@@ -1,4 +1,4 @@
-import { TPrompt } from "@/hooks/db/use-prompts";
+import { TPrompt } from "@/hooks/query/use-prompts-query";
 import React, { useState } from "react";
 import {
   Popover,
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/command";
 import { Plus } from "@phosphor-icons/react";
 import { usePromptsStore } from "@/store/chat";
-import { usePromptsQuery } from "@/hooks/chat";
+import { usePrompts } from "@/hooks/chat";
 
 export type TPromptsBotsCombo = {
   children: React.ReactNode;
@@ -34,7 +34,7 @@ export const PromptsBotsCombo = ({
 }: TPromptsBotsCombo) => {
   const [commandInput, setCommandInput] = useState("");
   const { open: openPrompts } = usePromptsStore();
-  const { allPrompts } = usePromptsQuery();
+  const { allPrompts } = usePrompts();
 
   return (
     <Popover open={open} onOpenChange={onOpenChange}>

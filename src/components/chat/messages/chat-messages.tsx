@@ -1,11 +1,12 @@
-import { useSessionsContext } from "@/context/sessions";
 import { TChatMessage } from "@/types/chat/chat.type";
 import { useEffect, useRef } from "react";
 import { AIMessage } from "./ai-message";
 import { HumanMessage } from "./human-message";
+import { useSessionHooks } from "@/hooks/chat";
+
 export type TMessageListByDate = Record<string, TChatMessage[]>;
 export const ChatMessages = () => {
-  const { currentSession } = useSessionsContext();
+  const { currentSession } = useSessionHooks();
   const chatContainer = useRef<HTMLDivElement>(null);
   useEffect(() => {
     scrollToBottom();

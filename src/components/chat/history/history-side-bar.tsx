@@ -1,4 +1,3 @@
-import { useSessionsContext } from "@/context/sessions";
 import { sortSessions } from "@/lib/chat/helper";
 import { cn } from "@/lib/utils";
 import { SidebarLeftIcon } from "@hugeicons/react";
@@ -9,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Flex } from "@/components/ui/flex";
 import { Tooltip } from "@/components/ui/tooltip";
 import { HistoryItem } from "./history-item";
+import { useSessionHooks } from "@/hooks/chat/use-session-hooks";
 
 export const HistorySidebar = () => {
-  const { sessions, createSession, currentSession } = useSessionsContext();
+  const { sessions } = useSessionHooks();
   const [open, setOpen] = useState(false);
 
   return (

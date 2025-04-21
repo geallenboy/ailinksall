@@ -1,131 +1,103 @@
 "use client";
+import { useEffect, useState } from "react";
+import { useChatStore } from "@/store/chat/chat-store";
+import { usePreferenceHooks } from "@/hooks/chat/use-preference-hooks";
+import { useChatSessionQuery, useModelList, useTools } from "@/hooks";
 import { useToast } from "@/components/ui/use-toast";
-import { useTools } from "@/hooks";
-import {
-  TAssistant,
-  TChatMessage,
-  TLLMInputProps,
-  TToolResponse,
-} from "@/types/chat";
-import { useModelList } from "@/hooks/chat/use-model-list";
-import { removeExtraSpaces, sortMessages } from "@/lib/chat/helper";
-import {
-  DisableEnter,
-  ShiftEnterToLineBreak,
-} from "@/lib/chat/tiptap-extension";
-import type { Serialized } from "@langchain/core/load/serializable";
+import { Document } from "@tiptap/extension-document";
+import { Paragraph } from "@tiptap/extension-paragraph";
+import { Text } from "@tiptap/extension-text";
+import { Placeholder } from "@tiptap/extension-placeholder";
+import { Highlight } from "@tiptap/extension-highlight";
+import { HardBreak } from "@tiptap/extension-hard-break";
+import { useEditor } from "@tiptap/react";
+import { TLLMInputProps, TChatMessage, TToolResponse } from "@/types/chat";
+import { v4 } from "uuid";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
-import { LLMResult } from "@langchain/core/outputs";
 import {
   BaseMessagePromptTemplateLike,
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
-import { Document } from "@tiptap/extension-document";
-import { HardBreak } from "@tiptap/extension-hard-break";
-import { Highlight } from "@tiptap/extension-highlight";
-import { Paragraph } from "@tiptap/extension-paragraph";
-import { Placeholder } from "@tiptap/extension-placeholder";
-import { Text } from "@tiptap/extension-text";
-import { useEditor } from "@tiptap/react";
 import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
-import dayjs from "dayjs";
-import { createContext, useContext, useEffect, useState } from "react";
-import { v4 } from "uuid";
-import { useSessionsContext } from "@/context";
-import { usePreferencesStore, useSettingsStore } from "@/store/chat";
 import { defaultPreferences } from "@/config/chat/preferences";
+import { useSessionHooks } from "./use-session-hooks";
+import { useSettingsStore } from "@/store/chat";
+import { removeExtraSpaces, sortMessages } from "@/lib/chat/helper";
+import dayjs from "dayjs";
+import {
+  DisableEnter,
+  ShiftEnterToLineBreak,
+} from "@/lib/chat/tiptap-extension";
+import { Serialized } from "@langchain/core/load/serializable";
+import { LLMResult } from "@langchain/core/outputs";
 
-export type TChatContext = {
-  editor: ReturnType<typeof useEditor>;
-  sendMessage: () => void;
-  handleRunModel: (props: TLLMInputProps, clear?: () => void) => void;
-  openPromptsBotCombo: boolean;
-  setOpenPromptsBotCombo: (value: boolean) => void;
-  contextValue: string;
-  isGenerating: boolean;
-  setContextValue: (value: string) => void;
-  stopGeneration: () => void;
-};
-
-export const ChatContext = createContext<undefined | TChatContext>(undefined);
-
-export const useChatContext = () => {
-  const context = useContext(ChatContext);
-  if (context === undefined) {
-    throw new Error("useChat must be used within a ChatProvider");
-  }
-  return context;
-};
-
-export type TChatProvider = {
-  children: React.ReactNode;
-};
-
-export const ChatProvider = ({ children }: TChatProvider) => {
+export function useChatHooks() {
   const {
-    setCurrentSession,
-    refetchSessions,
+    contextValue,
+    isGenerating,
+    openPromptsBotCombo,
+    currentMessage,
+    currentTools,
+    abortController,
+    setContextValue,
+    setIsGenerating,
+    setOpenPromptsBotCombo,
+    setCurrentMessage,
+    updateCurrentMessage,
+    setCurrentTools,
+    setAbortController,
+  } = useChatStore();
+
+  const {
     currentSession,
+    setCurrentSession,
     addMessageToSession,
-  } = useSessionsContext();
-  const { getAssistantByKey } = useModelList();
-  const [openPromptsBotCombo, setOpenPromptsBotCombo] = useState(false);
-  const [contextValue, setContextValue] = useState("");
-  const { open: openSettings } = useSettingsStore();
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [currentMessage, setCurrentMessage] = useState<TChatMessage>();
-  const [currentTools, setCurrentTools] = useState<TToolResponse[]>([]);
-  const { getSessionById, updateSessionMutation } = useSessionsContext();
-  const { apiKeys, preferences, updatePreferences } = usePreferencesStore();
-  const { createInstance, getModelByKey } = useModelList();
-  const { toast } = useToast();
+    getSessionById,
+    refetchSessions,
+  } = useSessionHooks();
+  const { updateSessionMutation } = useChatSessionQuery();
+
+  const { apiKeys, preferences, updatePreferences } = usePreferenceHooks();
+  const { getAssistantByKey, createInstance, getModelByKey } = useModelList();
   const { getToolByKey } = useTools();
-
-  const [abortController, setAbortController] = useState<AbortController>();
-
-  const updateCurrentMessage = (update: Partial<TChatMessage>) => {
-    setCurrentMessage((prev) => {
-      if (!!prev) {
-        return {
-          ...prev,
-          ...update,
-        };
-      }
-      return prev;
-    });
-  };
+  const { toast } = useToast();
+  const { open: openSettings } = useSettingsStore();
 
   useEffect(() => {
-    const props = currentMessage;
+    if (!currentMessage) return;
 
-    props &&
-      setCurrentSession?.((session) => {
-        if (!session) return undefined;
-        const exisingMessage = session.messages.find(
-          (message) => message.id === props.id
-        );
-        if (exisingMessage) {
-          return {
-            ...session,
-            messages: session.messages.map((message) => {
-              if (message.id === props.id) {
-                return { message, ...{ ...props, tools: currentTools } };
-              }
-              return message;
-            }),
-          };
-        }
+    setCurrentSession?.((session: any) => {
+      if (!session) return undefined;
 
+      const existingMessage = session.messages.find(
+        (message: { id: string }) => message.id === currentMessage.id
+      );
+
+      if (existingMessage) {
         return {
           ...session,
-          messages: [...session.messages, { ...props, tools: currentTools }],
+          messages: session.messages.map((message: { id: string }) => {
+            if (message.id === currentMessage.id) {
+              return { ...message, ...currentMessage, tools: currentTools };
+            }
+            return message;
+          }),
         };
-      });
+      }
+
+      return {
+        ...session,
+        messages: [
+          ...session.messages,
+          { ...currentMessage, tools: currentTools },
+        ],
+      };
+    });
 
     if (currentMessage?.stop) {
       currentMessage?.sessionId &&
-        addMessageToSession(currentMessage?.sessionId, {
+        addMessageToSession(currentMessage.sessionId, {
           ...currentMessage,
           isLoading: false,
           tools: currentTools?.map((t) => ({ ...t, toolLoading: false })),
@@ -147,7 +119,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
     context?: string;
     image?: string;
     history: TChatMessage[];
-    assistant: TAssistant;
+    assistant: any;
   }) => {
     const hasPreviousMessages = history?.length > 0;
     const systemPrompt = assistant.systemPrompt;
@@ -186,7 +158,6 @@ export const ChatProvider = ({ children }: TChatProvider) => {
           ]
         : userContent,
     ];
-
     const prompt = ChatPromptTemplate.fromMessages([
       system,
       messageHolders,
@@ -196,7 +167,6 @@ export const ChatProvider = ({ children }: TChatProvider) => {
 
     return prompt;
   };
-
   const runModel = async (props: TLLMInputProps) => {
     setIsGenerating(true);
     setCurrentMessage(undefined);
@@ -398,8 +368,8 @@ export const ChatProvider = ({ children }: TChatProvider) => {
                 console.error("handleLLMError", err);
                 if (!currentAbortController?.signal.aborted) {
                   toast({
-                    title: "错误",
-                    description: "发生了一些问题",
+                    title: "Error",
+                    description: "Something went wrong",
                     variant: "destructive",
                   });
                 }
@@ -435,7 +405,6 @@ export const ChatProvider = ({ children }: TChatProvider) => {
       console.error(err);
     }
   };
-
   const generateTitleForSession = async (sessionId: string) => {
     const session = await getSessionById(sessionId);
     const assistant = getAssistantByKey(preferences.defaultAssistant);
@@ -444,9 +413,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
     }
 
     const apiKey = apiKeys[assistant.model.baseModel];
-
     const selectedModel = await createInstance(assistant.model, apiKey!);
-
     const firstMessage = session?.messages?.[0];
 
     if (
@@ -471,9 +438,9 @@ export const ChatProvider = ({ children }: TChatProvider) => {
         message: [new HumanMessage(firstMessage.rawHuman)],
       });
 
-      const generation = await selectedModel.invoke(prompt as any, {});
-
+      const generation = await selectedModel.invoke(prompt);
       const newTitle = generation?.content?.toString() || session.title;
+
       await updateSessionMutation.mutate({
         sessionId,
         session: newTitle
@@ -482,7 +449,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
       });
     } catch (e) {
       console.error(e);
-      return firstMessage.rawHuman;
+      return;
     }
   };
 
@@ -491,21 +458,19 @@ export const ChatProvider = ({ children }: TChatProvider) => {
       return;
     }
 
-    const assitantprops = getAssistantByKey(props?.assistant.key);
-
-    if (!assitantprops) {
+    const assistantProps = getAssistantByKey(props?.assistant.key);
+    if (!assistantProps) {
       return;
     }
 
-    const apiKey = apiKeys[assitantprops.model.baseModel];
-
-    if (!apiKey && assitantprops.model.baseModel !== "ollama") {
+    const apiKey = apiKeys[assistantProps.model.baseModel];
+    if (!apiKey && assistantProps.model.baseModel !== "ollama") {
       toast({
         title: "Ahh!",
         description: "API key is missing. Please check your settings.",
         variant: "destructive",
       });
-      openSettings(assitantprops.model.baseModel);
+      openSettings(assistantProps.model.baseModel);
       return;
     }
 
@@ -516,7 +481,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
       input: removeExtraSpaces(props?.input),
       context: removeExtraSpaces(props?.context),
       image: props?.image,
-      assistant: assitantprops.assistant,
+      assistant: assistantProps.assistant,
       messageId: props?.messageId,
     });
     refetchSessions?.();
@@ -528,7 +493,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
       Paragraph,
       Text,
       Placeholder.configure({
-        placeholder: "输入 / 或询问任何问题...",
+        placeholder: "Type / or Ask anything...",
       }),
       ShiftEnterToLineBreak,
       Highlight.configure({
@@ -561,7 +526,6 @@ export const ChatProvider = ({ children }: TChatProvider) => {
         setOpenPromptsBotCombo(false);
       }
     },
-
     parseOptions: {
       preserveWhitespace: "full",
     },
@@ -589,21 +553,17 @@ export const ChatProvider = ({ children }: TChatProvider) => {
       }
     );
   };
-  return (
-    <ChatContext.Provider
-      value={{
-        editor,
-        sendMessage,
-        handleRunModel,
-        openPromptsBotCombo,
-        setOpenPromptsBotCombo,
-        contextValue,
-        isGenerating,
-        setContextValue,
-        stopGeneration,
-      }}
-    >
-      {children}
-    </ChatContext.Provider>
-  );
-};
+
+  return {
+    editor,
+    contextValue,
+    isGenerating,
+    openPromptsBotCombo,
+    sendMessage,
+    handleRunModel,
+    stopGeneration,
+    setContextValue,
+    setOpenPromptsBotCombo,
+    generateTitleForSession,
+  };
+}

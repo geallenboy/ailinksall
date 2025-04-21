@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { TPrompt } from '@/hooks/db/use-prompts';
+import { TPrompt } from '@/hooks/query/use-prompts-query';
 
-// 封装提示相关的React Query钩子
-export function usePromptsQuery() {
+export function usePrompts() {
     const queryClient = useQueryClient();
 
     // 获取本地提示

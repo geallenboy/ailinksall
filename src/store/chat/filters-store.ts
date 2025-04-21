@@ -1,9 +1,6 @@
-/**
- * 过滤器状态管理
- * 实现的命令面板控制逻辑
- */
+
 import { create } from 'zustand';
-import { useSessionsStore } from './sessions-store';
+import { useSessionHooks } from '@/hooks/chat/use-session-hooks';
 
 
 /**
@@ -11,7 +8,6 @@ import { useSessionsStore } from './sessions-store';
  */
 interface FiltersState {
     isFilterOpen: boolean;              // 过滤面板是否打开
-
     // 操作方法
     open: () => void;                   // 打开过滤面板
     dismiss: () => void;                // 关闭过滤面板
@@ -28,7 +24,7 @@ export const useFiltersStore = create<FiltersState>((set, get) => ({
     // 打开过滤面板并刷新会话列表
     open: () => {
         // 如果需要刷新会话列表，可以在这里调用 sessions store 的方法
-        const { refetchSessions } = useSessionsStore.getState();
+        const { refetchSessions } = useSessionHooks();
         refetchSessions?.();
         set({ isFilterOpen: true });
     },

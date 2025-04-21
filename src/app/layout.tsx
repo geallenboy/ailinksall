@@ -2,12 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Toaster } from "@/components/ui/sonner";
-import { ReactQueryProvider } from "@/context";
 import { ThemeProvider } from "@/components/public/theme-provider";
 import { cn } from "@/lib/utils";
 import Provider from "./provider";
 import "./globals.css";
 import { interVar } from "./fonts";
+import { ReactQueryProvider } from "@/provider/react-query";
 
 export const metadata: Metadata = {
   title: "ChatHub",

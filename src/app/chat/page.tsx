@@ -1,12 +1,11 @@
 "use client";
 
 import Spinner from "@/components/ui/loading-spinner";
-import { useSessionsContext } from "@/context";
-import { useRouter } from "next/navigation";
+import { useSessionHooks } from "@/hooks/chat/use-session-hooks";
 import { useEffect } from "react";
 
 export default function Home() {
-  const { createSession } = useSessionsContext();
+  const { createSession } = useSessionHooks();
   useEffect(() => {
     createSession({ redirect: true });
   }, []);

@@ -1,17 +1,14 @@
-import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
-
 import { googleSearchTool } from "@/lib/tools/google";
 import { duckduckGoTool } from "@/lib/tools/duckduckgo";
 import { dalleTool } from "@/lib/tools/dalle";
-
 import { GlobalSearchIcon, Image01Icon, BrainIcon } from "@hugeicons/react";
 import { memoryTool } from "@/lib/tools/memory";
 import { useSettingsStore } from "@/store/chat/settings-store";
-import { usePreferencesStore } from "@/store/chat";
+import { usePreferenceStore } from "@/store/chat";
 import { TTool, TToolKey } from "@/types/chat";
 
 export const useTools = () => {
-  const { preferences } = usePreferencesStore();
+  const { preferences } = usePreferenceStore();
   const { open } = useSettingsStore();
   const tools: TTool[] = [
     {
@@ -100,11 +97,6 @@ export const useTools = () => {
       smallIcon: BrainIcon,
     },
   ];
-
-  const searchTool = new TavilySearchResults({
-    maxResults: 5,
-    apiKey: "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",
-  });
 
   const getToolByKey = (key: TToolKey) => {
     return tools.find((tool) => tool.key.includes(key));

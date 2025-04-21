@@ -5,13 +5,11 @@ import { defaultPreferences } from "@/config/chat/preferences";
 
 // 定义助手状态类型
 interface AssistantState {
-    // UI状态
     isAssistantOpen: boolean;
     openCreateAssistant: boolean;
     updateAssistant?: TAssistant;
-    selectedAssistantKey: string; // 记录选中的助手key
+    selectedAssistantKey: string;
 
-    // UI操作方法
     open: () => void;
     dismiss: () => void;
     setOpenCreateAssistant: (isOpen: boolean) => void;
@@ -19,7 +17,6 @@ interface AssistantState {
     setSelectedAssistantKey: (key: string) => void;
 }
 
-// 创建Zustand store
 export const useAssistantStore = create<AssistantState>((set) => ({
     // 初始状态
     isAssistantOpen: false,

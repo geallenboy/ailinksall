@@ -1,5 +1,6 @@
 import { encodingForModel } from "js-tiktoken";
-import { TModelKey, useModelList } from "./use-model-list";
+import { useModelList } from "./use-model-list";
+import { TModelKey } from "@/types/chat";
 
 export const useTokenCounter = () => {
   const { getModelByKey } = useModelList();

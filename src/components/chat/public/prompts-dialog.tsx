@@ -4,12 +4,11 @@ import React from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { CreatePrompt } from "@/components/chat/prompts/create-prompt";
 import { PromptLibrary } from "@/components/chat/prompts/prompt-library";
-import { usePromptsQuery } from "@/hooks/chat/use-prompts-query";
-import { useChatContext } from "@/context/chat"; // 假设这个仍需要使用
 import { usePromptsStore } from "@/store/chat";
+import { usePrompts } from "@/hooks/chat";
+import { useChatHooks } from "@/hooks/chat/use-chat-hooks";
 
 export const PromptsDialog = () => {
-  // 从Zustand获取状态和方法
   const {
     isPromptOpen,
     showCreatePrompt,
@@ -21,17 +20,15 @@ export const PromptsDialog = () => {
     setEditablePrompt,
   } = usePromptsStore();
 
-  // 获取提示相关查询和mutation
   const {
     localPromptsQuery,
     publicPromptsQuery,
     createPromptMutation,
     updatePromptMutation,
     deletePromptMutation,
-  } = usePromptsQuery();
+  } = usePrompts();
 
-  // 聊天编辑器上下文(假设这个仍然需要使用)
-  const { editor } = useChatContext();
+  const { editor } = useChatHooks();
 
   return (
     <Dialog

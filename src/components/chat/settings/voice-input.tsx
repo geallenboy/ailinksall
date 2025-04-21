@@ -3,10 +3,10 @@ import { SettingCard } from "./setting-card";
 import { Flex } from "@/components/ui/flex";
 import { Type } from "@/components/ui/text";
 import { Switch } from "@/components/ui/switch";
-import { usePreferencesStore } from "@/store/chat";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 export const VoiceInput = () => {
-  const { updatePreferences, preferences } = usePreferencesStore();
+  const { updatePreferences, preferences } = usePreferenceHooks();
   return (
     <SettingsContainer title="语音转文字设置">
       <SettingCard className="justify-center flex flex-col p-3">

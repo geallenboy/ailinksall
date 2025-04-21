@@ -1,12 +1,11 @@
 import { get, set } from "idb-keyval";
 import dayjs from "dayjs";
 import { v4 } from "uuid";
-
 import { sortSessions } from "@/lib/chat/helper";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { TChatMessage, TChatSession } from "@/types/chat/chat.type";
 
-export const useChatSessionDB = (id?: string) => {
+export const useChatSessionQuery = (id?: string) => {
   const getSessions = async (): Promise<TChatSession[]> => {
     return (await get("chat-sessions")) || [];
   };

@@ -12,8 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { DotsThree, Pencil, TrashSimple } from "@phosphor-icons/react";
 import { TAssistant } from "@/types/chat";
-import { usePreferencesStore } from "@/store/chat";
 import { defaultPreferences } from "@/config/chat/preferences";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 export type TAssistantItem = {
   assistant: TAssistant;
@@ -32,7 +32,7 @@ export const AssistantItem = ({
   const assistantProps = getAssistantByKey(assistant.key);
   const [open, setOpen] = useState(false);
   const model = assistantProps?.model;
-  const { updatePreferences } = usePreferencesStore();
+  const { updatePreferences } = usePreferenceHooks();
 
   return (
     <CommandItem
