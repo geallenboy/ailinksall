@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { TChatMessage, TChatSession } from "@/types/chat";
+import { TChatMessage } from "@/types/chat";
 import { useSessionStore } from "@/store/chat";
 import { useChatSessionQuery } from "../query";
 
 export function useSessionHooks() {
   const { sessionId } = useParams();
-  const router = useRouter();
+
 
   const {
     sessions,
@@ -21,7 +21,7 @@ export function useSessionHooks() {
     setCurrentSessionLoading,
   } = useSessionStore();
 
-  // 从原有的 useChatSession 获取数据处理方法
+  // 获取数据处理方法
   const {
     sessionsQuery,
     createNewSessionMutation,
@@ -29,34 +29,31 @@ export function useSessionHooks() {
     addMessageToSessionMutation,
     getSessionByIdMutation,
     getSessionByIdQuery,
-    updateSessionMutation,
-    // 其他需要的方法...
   } = useChatSessionQuery(sessionId?.toString());
 
   // 监听所有会话数据变化
   useEffect(() => {
     if (sessionsQuery.data) {
       setSessions(sessionsQuery.data);
+      setAllSessionLoading(sessionsQuery.isLoading);
     }
-    setAllSessionLoading(sessionsQuery.isLoading);
+
   }, [
     sessionsQuery.data,
     sessionsQuery.isLoading,
-    setSessions,
-    setAllSessionLoading,
   ]);
 
   // 监听当前会话数据变化
   useEffect(() => {
     if (getSessionByIdQuery.data) {
       setCurrentSession(getSessionByIdQuery.data);
+      setCurrentSessionLoading(getSessionByIdQuery.isLoading);
     }
-    setCurrentSessionLoading(getSessionByIdQuery.isLoading);
+
   }, [
     getSessionByIdQuery.data,
     getSessionByIdQuery.isLoading,
-    setCurrentSession,
-    setCurrentSessionLoading,
+
   ]);
 
   // 如果当前会话不存在，创建新会话
@@ -113,10 +110,6 @@ export function useSessionHooks() {
         message,
       });
 
-      // 如果添加到当前会话，刷新当前会话
-      if (sessionId === currentSession?.id) {
-        getSessionByIdQuery.refetch();
-      }
     } catch (error) {
       console.error("Failed to add message:", error);
     }
@@ -132,25 +125,6 @@ export function useSessionHooks() {
     }
   };
 
-  // // 更新会话
-  // const updateSession = async (
-  //   sessionId: string,
-  //   updates: Partial<TChatSession>
-  // ) => {
-  //   try {
-  //     await updateSessionMutation?.mutateAsync({ id: sessionId, updates });
-
-  //     // 如果更新的是当前会话，刷新当前会话
-  //     if (sessionId === currentSession?.id) {
-  //       getSessionByIdQuery.refetch();
-  //     }
-
-  //     // 刷新所有会话列表
-  //     sessionsQuery.refetch();
-  //   } catch (error) {
-  //     console.error("Failed to update session:", error);
-  //   }
-  // };
 
 
   return {
@@ -163,7 +137,6 @@ export function useSessionHooks() {
     removeMessage,
     addMessageToSession,
     getSessionById,
-    // updateSession,
     setCurrentSession,
     setGenerating,
     refetchSessions: sessionsQuery.refetch,

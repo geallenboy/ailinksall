@@ -34,7 +34,6 @@ export function usePreferenceHooks() {
 
   // 从服务器初始化数据（如果尚未加载）
   useEffect(() => {
-    console.log("usePreferenceHooks: Initializing preference data...");
     // 仅在未加载状态时从服务器获取数据
     if (!isLoaded) {
       const initializeData = async () => {

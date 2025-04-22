@@ -237,7 +237,36 @@ export const useChatSessionQuery = (id?: string) => {
       sessionsQuery.refetch();
     },
   });
-
+  const updateMessageMutation = useMutation({
+    mutationFn: async ({
+      sessionId,
+      messageId,
+      message,
+    }: {
+      sessionId: string;
+      messageId: string;
+      message: Partial<TChatMessage>;
+    }) => {
+      const sessions = await getSessions();
+      const newSessions = sessions.map((session) => {
+        if (session.id === sessionId) {
+          const newMessages = session.messages.map((msg) => {
+            if (msg.id === messageId) {
+              return { ...msg, ...message };
+            }
+            return msg;
+          });
+          return { ...session, messages: newMessages };
+        }
+        return session;
+      });
+      await set("chat-sessions", newSessions);
+      return newSessions;
+    },
+    onSuccess: () => {
+      sessionsQuery.refetch();
+    },
+  });
   return {
     sessionsQuery,
     setSessionMutation,
@@ -251,5 +280,6 @@ export const useChatSessionQuery = (id?: string) => {
     removeMessageByIdMutation,
     getSessionByIdMutation,
     addSessionsMutation,
+    updateMessageMutation
   };
 };

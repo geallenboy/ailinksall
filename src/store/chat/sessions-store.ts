@@ -10,7 +10,7 @@ interface SessionState {
 
     // Actions
     setSessions: (sessions: TChatSession[]) => void;
-    setCurrentSession: (session?: any) => void;
+    setCurrentSession: (session?: TChatSession | undefined) => void;
     setGenerating: (isGenerating: boolean) => void;
     setAllSessionLoading: (isLoading: boolean) => void;
     setCurrentSessionLoading: (isLoading: boolean) => void;
