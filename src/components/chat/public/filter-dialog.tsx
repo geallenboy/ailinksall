@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -42,7 +42,21 @@ export const FilterDialog = () => {
 
   // 设置路由
   const router = useRouter();
-
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        const {
+          isFilterOpen,
+          open: setIsFilterOpen,
+          dismiss,
+        } = useFiltersStore();
+        isFilterOpen ? dismiss() : setIsFilterOpen();
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
   // 注册键盘快捷键
   useFilterKeyboardShortcut();
 

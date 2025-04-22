@@ -15,115 +15,48 @@ import { Type } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { CreateAssistant } from "@/components/chat/assistants/create-assistant";
 import { AssistantItem } from "@/components/chat/assistants/assistant-item";
-import { useAssistant } from "@/hooks/chat/use-assistant";
-import { defaultPreferences } from "@/config/chat/preferences";
-import { useEffect } from "react";
-import { TAssistant } from "@/types/chat";
-import { useAssistantsQuery } from "@/hooks";
-import { usePreferenceHooks } from "@/hooks/chat";
+import { useAssistantHooks } from "@/hooks/chat/use-assistant-hooks";
 
 /**
  * 助手选择对话框组件
+ * 负责UI渲染，所有逻辑委托给useAssistant hook
  */
 export function AssistantDialog() {
-  // 使用助手hook获取所需状态和方法
+  // 使用助手hook获取所需状态和方法，集中管理所有助手相关逻辑
   const {
+    // 状态
     isAssistantOpen,
     openCreateAssistant,
     updateAssistant,
-    selectedAssistantKey,
     searchRef,
+    setUpdateAssistant,
+    // 操作方法
     dismiss,
     setOpenCreateAssistant,
-    setUpdateAssistant,
-    setSelectedAssistantKey,
+    handleSelectAssistant,
+    handleDeleteAssistant,
+    handleEditAssistant,
+    handleCreateAssistant,
+    handleUpdateAssistant,
+
+    // 助手数据
     getAssistantsByType,
-  } = useAssistant();
-  const {
-    createAssistantMutation,
-    updateAssistantMutation,
-    deleteAssistantMutation,
-  } = useAssistantsQuery();
-
-  // 获取偏好设置
-  const { updatePreferences } = usePreferenceHooks();
-
-  // 当助手对话框打开时，聚焦搜索框
-  useEffect(() => {
-    if (isAssistantOpen && searchRef?.current) {
-      searchRef?.current?.focus();
-    }
-  }, [isAssistantOpen, searchRef]);
-
-  // 处理选择助手的操作
-  const handleSelectAssistant = (assistant: TAssistant) => {
-    setSelectedAssistantKey(assistant.key);
-    // 同时更新偏好设置中的默认助手
-    updatePreferences({ defaultAssistant: assistant.key });
-    dismiss(); // 关闭助手对话框
-  };
-
-  // 处理删除助手的操作
-  const handleDeleteAssistant = (assistant: TAssistant) => {
-    deleteAssistantMutation?.mutate(assistant.key, {
-      onSuccess: () => {
-        // 如果删除的是当前选中的助手，重置为默认助手
-        if (assistant.key === selectedAssistantKey) {
-          updatePreferences({
-            defaultAssistant: defaultPreferences.defaultAssistant,
-          });
-        }
-      },
-    });
-  };
-
-  // 处理编辑助手的操作
-  const handleEditAssistant = (assistant: TAssistant) => {
-    setOpenCreateAssistant(true);
-    setUpdateAssistant(assistant);
-  };
-
-  // 处理创建新助手的操作
-  const handleCreateAssistant = (assistant: Omit<TAssistant, "key">) => {
-    createAssistantMutation.mutate(assistant as any, {
-      onSettled: () => {
-        setOpenCreateAssistant(false);
-      },
-    });
-  };
-
-  // 处理更新助手的操作
-  const handleUpdateAssistant = (assistant: TAssistant) => {
-    updateAssistantMutation.mutate(
-      {
-        assistantKey: assistant.key,
-        newAssistant: assistant,
-      },
-      {
-        onSettled: () => {
-          setOpenCreateAssistant(false);
-          setUpdateAssistant(undefined);
-        },
-      }
-    );
-  };
+  } = useAssistantHooks();
 
   /**
    * 渲染特定类型的助手列表
    * @param type 助手类型，如'custom'或'base'
    */
   const renderAssistants = (type: string) => {
-    return getAssistantsByType(type).map((assistant) => {
-      return (
-        <AssistantItem
-          key={assistant.key}
-          onDelete={() => handleDeleteAssistant(assistant)}
-          onEdit={() => handleEditAssistant(assistant)}
-          assistant={assistant}
-          onSelect={() => handleSelectAssistant(assistant)}
-        />
-      );
-    });
+    return getAssistantsByType(type).map((assistant) => (
+      <AssistantItem
+        key={assistant.key}
+        onDelete={() => handleDeleteAssistant(assistant)}
+        onEdit={() => handleEditAssistant(assistant)}
+        assistant={assistant}
+        onSelect={() => handleSelectAssistant(assistant)}
+      />
+    ));
   };
 
   return (
@@ -173,9 +106,7 @@ export function AssistantDialog() {
                       <Drawer.Trigger asChild>
                         <Button
                           size={"sm"}
-                          onClick={() => {
-                            setOpenCreateAssistant(true);
-                          }}
+                          onClick={() => setOpenCreateAssistant(true)}
                         >
                           添加新助手
                         </Button>

@@ -64,6 +64,49 @@ export function useChatHooks() {
   const { toast } = useToast();
   const { open: openSettings } = useSettingsStore();
 
+  const editor = useEditor({
+    extensions: [
+      Document,
+      Paragraph,
+      Text,
+      Placeholder.configure({
+        placeholder: "Type / or Ask anything...",
+      }),
+      ShiftEnterToLineBreak,
+      Highlight.configure({
+        HTMLAttributes: {
+          class: "prompt-highlight",
+        },
+      }),
+      HardBreak,
+      DisableEnter,
+    ],
+    content: ``,
+    autofocus: true,
+    onTransaction(props) {
+      const { editor } = props;
+      const text = editor.getText();
+      const html = editor.getHTML();
+      if (text === "/") {
+        setOpenPromptsBotCombo(true);
+      } else {
+        const newHTML = html.replace(
+          /{{{{(.*?)}}}}/g,
+          ` <mark class="prompt-highlight">$1</mark> `
+        );
+
+        if (newHTML !== html) {
+          editor.commands.setContent(newHTML, true, {
+            preserveWhitespace: true,
+          });
+        }
+        setOpenPromptsBotCombo(false);
+      }
+    },
+    parseOptions: {
+      preserveWhitespace: "full",
+    },
+  });
   useEffect(() => {
     if (!currentMessage) return;
 
@@ -73,11 +116,12 @@ export function useChatHooks() {
       const existingMessage = session.messages.find(
         (message: { id: string }) => message.id === currentMessage.id
       );
-
+      // 确保messages数组存在
+      const currentMessages = session.messages || [];
       if (existingMessage) {
         return {
           ...session,
-          messages: session.messages.map((message: { id: string }) => {
+          messages: currentMessages.map((message: { id: string }) => {
             if (message.id === currentMessage.id) {
               return { ...message, ...currentMessage, tools: currentTools };
             }
@@ -454,6 +498,7 @@ export function useChatHooks() {
   };
 
   const handleRunModel = async (props: TLLMInputProps, clear?: () => void) => {
+    console.log("props-input:", props.input);
     if (!props?.input) {
       return;
     }
@@ -487,56 +532,17 @@ export function useChatHooks() {
     refetchSessions?.();
   };
 
-  const editor = useEditor({
-    extensions: [
-      Document,
-      Paragraph,
-      Text,
-      Placeholder.configure({
-        placeholder: "Type / or Ask anything...",
-      }),
-      ShiftEnterToLineBreak,
-      Highlight.configure({
-        HTMLAttributes: {
-          class: "prompt-highlight",
-        },
-      }),
-      HardBreak,
-      DisableEnter,
-    ],
-    content: ``,
-    autofocus: true,
-    onTransaction(props) {
-      const { editor } = props;
-      const text = editor.getText();
-      const html = editor.getHTML();
-      if (text === "/") {
-        setOpenPromptsBotCombo(true);
-      } else {
-        const newHTML = html.replace(
-          /{{{{(.*?)}}}}/g,
-          ` <mark class="prompt-highlight">$1</mark> `
-        );
-
-        if (newHTML !== html) {
-          editor.commands.setContent(newHTML, true, {
-            preserveWhitespace: true,
-          });
-        }
-        setOpenPromptsBotCombo(false);
-      }
-    },
-    parseOptions: {
-      preserveWhitespace: "full",
-    },
-  });
-
   const sendMessage = async () => {
+    console.log("editor:", editor);
+    console.log("currentSession:", currentSession);
     if (!editor || !currentSession?.id) {
+      console.warn("无法发送消息: 编辑器或会话ID不存在");
       return;
     }
     const props = getAssistantByKey(preferences.defaultAssistant);
+    console.log("props", props);
     if (!props) {
+      console.warn("无法发送消息: 未找到助手配置");
       return;
     }
     handleRunModel(

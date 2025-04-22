@@ -7,7 +7,6 @@ import { useSettingsStore } from "@/store/chat/settings-store";
 export const SettingsDialog = () => {
   const { isSettingOpen, dismiss } = useSettingsStore();
 
-  // 拆分为更小的组件以优化性能
   return (
     <Dialog open={isSettingOpen} onOpenChange={(open) => !open && dismiss()}>
       <DialogContent className="w-[96dvw] max-h-[80dvh] rounded-2xl md:min-w-[800px] gap-0 md:h-[600px] flex flex-col overflow-hidden border border-white/5 p-0">
@@ -30,9 +29,7 @@ const DialogHeader = () => (
 
 // 导航菜单部分
 const SettingsNavigation = () => {
-  const settingMenu = useSettingsStore((state) => state.settingMenu);
-  const selectedMenu = useSettingsStore((state) => state.selectedMenu);
-  const setSelectedMenu = useSettingsStore((state) => state.setSelectedMenu);
+  const { settingMenu, selectedMenu, setSelectedMenu } = useSettingsStore();
 
   return (
     <div className="w-full md:w-[220px] px-2 pt-2 pb-2 md:pb-16 border-zinc-500/10 absolute md:h-full overflow-x-auto md:overflow-y-auto no-scrollbar left-0 top-0 right-0 md:bottom-0 flex flex-row md:flex-col md:gap-0 gap-1">
