@@ -1,4 +1,4 @@
-import { TModelKey, useModelList } from "@/hooks/use-model-list";
+import { useModelList } from "@/hooks/chat/use-model-list";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -9,7 +9,7 @@ import {
 import { Tooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { ArrowDown01Icon, SparklesIcon } from "@hugeicons/react";
-import { TAssistant } from "@/types/chat.type";
+import { TAssistant, TModelKey } from "@/types/chat";
 
 export type TRegenerateModelSelect = {
   assistant: TAssistant;

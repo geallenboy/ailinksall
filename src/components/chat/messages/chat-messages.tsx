@@ -1,20 +1,25 @@
-import { useSessionsContext } from "@/context/sessions";
-import { TChatMessage } from "@/types/chat.type";
+import { TChatMessage } from "@/types/chat/chat.type";
 import { useEffect, useRef } from "react";
 import { AIMessage } from "./ai-message";
 import { HumanMessage } from "./human-message";
+import { useSessionHooks } from "@/hooks/chat";
+
 export type TMessageListByDate = Record<string, TChatMessage[]>;
 export const ChatMessages = () => {
-  const { currentSession } = useSessionsContext();
+  const { currentSession } = useSessionHooks();
+
   const chatContainer = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     scrollToBottom();
   }, [currentSession?.messages]);
+
   const scrollToBottom = () => {
     if (chatContainer.current) {
       chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
     }
   };
+
   const renderMessage = (message: TChatMessage, isLast: boolean) => {
     return (
       <div className="flex flex-col gap-1 items-end w-full" key={message.id}>

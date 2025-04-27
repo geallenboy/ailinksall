@@ -1,4 +1,4 @@
-import { TChatMessage } from "@/types/chat.type";
+import { TChatMessage } from "@/types/chat/chat.type";
 import { Quotes } from "@phosphor-icons/react";
 import Image from "next/image";
 export type THumanMessage = {

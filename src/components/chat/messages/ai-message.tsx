@@ -1,13 +1,7 @@
 import { Quotes } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
 import * as Selection from "selection-popover";
-
-import {
-  useChatContext,
-  useSessionsContext,
-  useSettingsContext,
-} from "@/context";
-import { TChatMessage, TToolResponse } from "@/types/chat.type";
+import { TChatMessage, TToolResponse } from "@/types/chat/chat.type";
 
 import {
   useClipboard,
@@ -34,6 +28,9 @@ import {
   ThumbsDownIcon,
   Tick01Icon,
 } from "@hugeicons/react";
+import { useSettingsStore } from "@/store/chat";
+import { useChatHooks } from "@/hooks/chat/use-chat-hooks";
+import { useSessionHooks } from "@/hooks/chat";
 export type TAIMessage = {
   chatMessage: TChatMessage;
   isLast: boolean;
@@ -48,9 +45,9 @@ export const AIMessage = ({ chatMessage, isLast }: TAIMessage) => {
   const { showCopied, copy } = useClipboard();
   const { getModelByKey, getAssistantByKey, getAssistantIcon } = useModelList();
   const { renderMarkdown } = useMarkdown();
-  const { open: openSettings } = useSettingsContext();
-  const { removeMessage } = useSessionsContext();
-  const { handleRunModel, setContextValue, editor } = useChatContext();
+  const { open: openSettings } = useSettingsStore();
+  const { removeMessage } = useSessionHooks();
+  const { handleRunModel, setContextValue, editor } = useChatHooks();
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
   const { selectedText } = useTextSelection();
 

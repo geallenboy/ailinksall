@@ -1,11 +1,8 @@
 import { useToast } from "@/components/ui/use-toast";
-
 import axios from "axios";
-
 import { ArrowRight, CaretDown, Info } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { usePreferenceContext } from "@/context";
 
 import {
   DropdownMenu,
@@ -16,10 +13,11 @@ import {
 import { SettingCard } from "@/components/chat/settings/setting-card";
 import { Flex } from "@/components/ui/flex";
 import { Type } from "@/components/ui/text";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 export const WebSearchPlugin = () => {
   const { toast } = useToast();
-  const { preferences, updatePreferences } = usePreferenceContext();
+  const { preferences, updatePreferences } = usePreferenceHooks();
 
   const handleRunTest = async () => {
     try {

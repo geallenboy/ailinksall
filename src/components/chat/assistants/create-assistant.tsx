@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AddingSoon } from "@/components/ui/adding-soon";
 import { Badge } from "@/components/ui/badge";
-import { TAssistant } from "@/types/chat.type";
+import { TAssistant } from "@/types/chat";
 
 export type TCreateAssistant = {
   assistant?: TAssistant;

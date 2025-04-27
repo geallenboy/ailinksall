@@ -1,14 +1,15 @@
+"use client";
 import { ArrowRight, Info } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useLLMTest } from "@/hooks/use-llm-test";
-import { usePreferenceContext } from "@/context";
+import { useLLMTest } from "@/hooks/chat/use-llm-test";
 import { Flex } from "@/components/ui/flex";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 export const OpenAISettings = () => {
   const [key, setKey] = useState<string>("");
-  const { apiKeys, updateApiKey } = usePreferenceContext();
+  const { apiKeys, updateApiKey } = usePreferenceHooks();
   const { renderSaveApiKeyButton } = useLLMTest();
   useEffect(() => {
     setKey(apiKeys.openai || "");

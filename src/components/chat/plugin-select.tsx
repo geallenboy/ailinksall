@@ -1,6 +1,5 @@
-import { usePreferenceContext } from "@/context/preferences";
-import { useModelList } from "@/hooks/use-model-list";
-import { TToolKey, useTools } from "@/hooks/use-tools";
+import { useModelList } from "@/hooks/chat/use-model-list";
+import { useTools } from "@/hooks/chat/use-tools";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,8 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { Flex } from "@/components/ui/flex";
 import { Type } from "@/components/ui/text";
 import { ConnectIcon } from "@hugeicons/react";
+import { TToolKey } from "@/types/chat";
+import { usePreferenceHooks } from "@/hooks/chat";
 export type TPluginSelect = {
   selectedAssistantKey: string;
 };
@@ -22,7 +23,7 @@ export const PluginSelect = ({ selectedAssistantKey }: TPluginSelect) => {
   const [isOpen, setIsOpen] = useState(false);
   const { tools } = useTools();
   const { getAssistantByKey } = useModelList();
-  const { preferences, updatePreferences } = usePreferenceContext();
+  const { preferences, updatePreferences } = usePreferenceHooks();
   const availableTools = tools.filter((tool) => tool.showInMenu);
   const availableToolsKey = availableTools.map((tool) => tool.key);
   const [selectedPlugins, setSelectedPlugins] = useState<TToolKey[]>([]);

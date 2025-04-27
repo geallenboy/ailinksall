@@ -1,4 +1,4 @@
-import { roles } from "@/lib/prompts";
+
 import { supabase } from "@/lib/supabase";
 import { NextRequest, NextResponse } from "next/server";
 

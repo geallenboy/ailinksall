@@ -1,4 +1,4 @@
-import { TChatMessage, TChatSession } from "@/types/chat.type";
+import { TChatMessage, TChatSession } from "@/types/chat/chat.type";
 import dayjs from "dayjs";
 
 export const formatNumber = (number: number) => {

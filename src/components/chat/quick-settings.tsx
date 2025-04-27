@@ -1,4 +1,3 @@
-import { defaultPreferences, TPreferences } from "@/hooks/use-preferences";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,15 +9,17 @@ import { ArrowClockwise, Info } from "@phosphor-icons/react";
 import { ModelInfo } from "@/components/chat/model/model-info";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
-import { usePreferenceContext } from "@/context/preferences";
-import { useModelList } from "@/hooks/use-model-list";
+import { useModelList } from "@/hooks/chat/use-model-list";
 import { Flex } from "@/components/ui/flex";
 import { Type } from "@/components/ui/text";
 import { Settings03Icon } from "@hugeicons/react";
+import { TPreferences } from "@/types/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
+import { usePreferenceHooks } from "@/hooks/chat";
 
 export const QuickSettings = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { preferences, updatePreferences } = usePreferenceContext();
+  const { preferences, updatePreferences } = usePreferenceHooks();
   const { getModelByKey, getAssistantByKey } = useModelList();
 
   const renderResetToDefault = (key: keyof TPreferences) => {

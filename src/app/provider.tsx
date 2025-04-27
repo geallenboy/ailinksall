@@ -3,13 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { ensureUserExists } from "./actions/user-action";
-import userStore from "@/stores/user-store";
+import { useUserStore } from "@/store/user/user-store";
 
 const supabase = createClient();
 
 export default function Provider({ children }: { children: React.ReactNode }) {
   const [users, setUsers] = useState<any>(null);
-  const setUserData = userStore((state: any) => state.setData);
+  const { updateUser } = useUserStore();
   useEffect(() => {
     init();
   }, []);
@@ -26,7 +26,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
         email: user.email || "",
         displayName: user.user_metadata.full_name,
       });
-      setUserData(user);
+      updateUser(user);
     }
   };
 

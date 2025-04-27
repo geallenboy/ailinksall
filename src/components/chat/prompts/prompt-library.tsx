@@ -1,5 +1,4 @@
-import { useChatContext } from "@/context/chat";
-import { TPrompt } from "@/hooks/use-prompts";
+import { TPrompt } from "@/hooks/query/use-prompts-query";
 import { Edit02Icon, NoteIcon } from "@hugeicons/react";
 import { DotsThree, Pencil, TrashSimple } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useChatStore } from "@/store/chat";
 
 export type TPromptLibrary = {
   open: boolean;
@@ -41,7 +41,7 @@ export const PromptLibrary = ({
   onEdit,
   onDelete,
 }: TPromptLibrary) => {
-  const { editor } = useChatContext();
+  const { editor } = useChatStore();
 
   return (
     <Command>

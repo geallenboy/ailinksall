@@ -1,6 +1,5 @@
-import { useSessionsContext } from "@/context/sessions";
-import { TChatSession } from "@/types/chat.type";
-import { useModelList } from "@/hooks/use-model-list";
+import { TChatSession } from "@/types/chat/chat.type";
+import { useModelList } from "@/hooks/chat/use-model-list";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -16,6 +15,8 @@ import {
 import { Type } from "@/components/ui/text";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Delete01Icon, Edit02Icon } from "@hugeicons/react";
+import { useChatSessionQuery } from "@/hooks";
+import { useSessionHooks } from "@/hooks/chat/use-session-hooks";
 
 export const HistoryItem = ({
   session,
@@ -24,18 +25,15 @@ export const HistoryItem = ({
   session: TChatSession;
   dismiss: () => void;
 }) => {
-  const {
-    currentSession,
-    updateSessionMutation,
-    removeSessionByIdMutation,
-    createSession,
-  } = useSessionsContext();
+  const { currentSession, createSession } = useSessionHooks();
   const { getModelByKey, getAssistantByKey } = useModelList();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(session.title);
   const router = useRouter();
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
   const historyInputRef = useRef<HTMLInputElement>(null);
+  const { updateSessionMutation, removeSessionByIdMutation } =
+    useChatSessionQuery();
 
   const assistantProps = getAssistantByKey(
     session.messages?.[0]?.inputProps?.assistant?.key!
