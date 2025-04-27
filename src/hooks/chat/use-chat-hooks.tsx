@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
 import { useChatStore } from "@/store/chat/chat-store";
 import { usePreferenceHooks } from "@/hooks/chat/use-preference-hooks";
 import { useModelList, useTools } from "@/hooks";
@@ -66,9 +65,7 @@ export function useChatHooks() {
   const setIsGenerating = useChatStore((state) => state.setIsGenerating);
   const currentSession = useSessionStore.getState().currentSession;
 
-  const setCurrentSession = useSessionStore((state) => state.setCurrentSession);
-  const { addMessageToSession, getSessionById, refetchSessions } =
-    useSessionHooks();
+  const { getSessionById, refetchSessions } = useSessionHooks();
   const { createInstance, getModelByKey, getAssistantByKey } = useModelList();
   const preferences = usePreferenceStore((state) => state.preferences);
   const apiKeys = usePreferenceStore((state) => state.apiKeys);
@@ -86,43 +83,6 @@ export function useChatHooks() {
       });
     }
   };
-
-  useEffect(() => {
-    console.log("currentMessage", currentMessage);
-    const props = currentMessage;
-
-    if (props) {
-      if (currentSession) {
-        const exisingMessage = currentSession.messages.find(
-          (message) => message.id === props.id
-        );
-
-        let updatedSession;
-        if (exisingMessage) {
-          updatedSession = {
-            ...currentSession,
-            messages: currentSession.messages.map((message) => {
-              if (message.id === props.id) {
-                return { message, ...{ ...props, tools: currentTools } };
-              }
-              return message;
-            }),
-          };
-        } else {
-          updatedSession = {
-            ...currentSession,
-            messages: [
-              ...currentSession.messages,
-              { ...props, tools: currentTools },
-            ],
-          };
-        }
-
-        // 更新会话
-        setCurrentSession(updatedSession);
-      }
-    }
-  }, [currentMessage, currentTools]);
 
   const stopGeneration = () => {
     abortController?.abort("cancel");
@@ -531,6 +491,8 @@ export function useChatHooks() {
   };
 
   return {
+    currentMessage,
+    currentTools,
     editor,
     sendMessage,
     handleRunModel,

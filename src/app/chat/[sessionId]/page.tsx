@@ -1,16 +1,11 @@
 "use client";
-import { memo, useCallback } from "react";
+import { useCallback } from "react";
 import { ChatInput } from "@/components/chat/chat/chat-input";
 import { Navbar } from "@/components/chat/layout/navbar";
 import { ChatMessages } from "@/components/chat/messages/chat-messages";
 import Spinner from "@/components/ui/loading-spinner";
 import { useSessionStore } from "@/store/chat";
 import { useParams } from "next/navigation";
-
-// 使用 memo 优化子组件
-const MemoizedChatMessages = memo(ChatMessages);
-const MemoizedChatInput = memo(ChatInput);
-const MemoizedNavbar = memo(Navbar);
 
 const ChatSessionPage = () => {
   // 直接获取组合后的加载状态
@@ -32,12 +27,12 @@ const ChatSessionPage = () => {
 
   return (
     <div className="w-full h-[100%] bg-white dark:bg-zinc-800 rounded-xl flex flex-row relative overflow-hidden">
-      <MemoizedNavbar />
+      <Navbar />
       {isLoading && renderLoader()}
       {!isLoading && (
         <>
-          <MemoizedChatMessages key={`messages-${sessionId}`} />
-          <MemoizedChatInput key={`input-${sessionId}`} />
+          <ChatMessages key={`messages-${sessionId}`} />
+          <ChatInput key={`input-${sessionId}`} />
         </>
       )}
     </div>

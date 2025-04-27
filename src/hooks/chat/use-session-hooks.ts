@@ -9,55 +9,16 @@ import { createLogger } from "@/utils/logger";
 const logger = createLogger("useSessionHooks");
 
 export function useSessionHooks() {
-  // 使用 useRef 避免重复初始化
-  const initialized = useRef(false);
-
-  if (!initialized.current) {
-    logger.info("🚀 初始化 useSessionHooks");
-  }
-
-  // 记录调用次数以便调试
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-  try {
-    const { sessionId } = useParams();
-    logger.debug("获取路由参数", { sessionId });
-  } catch (error) {
-    logger.warn("无法获取路由参数，可能不在路由环境中");
-  }
-
-  // 尝试获取路由参数，处理可能的异常
-  let sessionId;
-  try {
-    const params = useParams();
-    sessionId = params?.sessionId;
-    logger.debug("路由参数获取成功", { sessionId });
-  } catch (error) {
-    logger.warn("无法获取路由参数，可能不在路由环境中");
-  }
-
-  // 使用更细粒度的选择器从 store 获取状态
-  logger.debug("获取 store 状态");
+  const { sessionId } = useParams();
+  const setAllSessionLoading = useSessionStore(state => state.setAllSessionLoading);
+  const setCurrentSessionLoading = useSessionStore(state => state.setCurrentSessionLoading);
   const sessions = useSessionStore(state => state.sessions);
   const currentSession = useSessionStore(state => state.currentSession);
   const isGenerating = useSessionStore(state => state.isGenerating);
-
-  logger.debug("当前状态", {
-    sessionsCount: sessions.length,
-    currentSessionId: currentSession?.id,
-    isGenerating
-  });
-
-  // 获取状态更新函数
-  logger.debug("获取 store 更新函数");
   const setSessions = useSessionStore(state => state.setSessions);
   const setCurrentSession = useSessionStore(state => state.setCurrentSession);
   const setGenerating = useSessionStore(state => state.setGenerating);
-  const setAllSessionLoading = useSessionStore(state => state.setAllSessionLoading);
-  const setCurrentSessionLoading = useSessionStore(state => state.setCurrentSessionLoading);
 
-  // 获取数据处理方法
-  logger.debug("初始化查询", { sessionId });
   const {
     sessionsQuery,
     createNewSessionMutation,
@@ -68,73 +29,6 @@ export function useSessionHooks() {
   } = useChatSessionQuery(sessionId?.toString());
   const currentSessionQuery = getSessionByIdQuery;
 
-  logger.debug("查询状态", {
-    sessionsLoading: sessionsQuery?.isLoading,
-    sessionsError: !!sessionsQuery?.error,
-    currentSessionLoading: currentSessionQuery?.isLoading,
-    currentSessionError: !!currentSessionQuery?.error,
-  });
-
-  // 监听所有会话数据变化
-  useEffect(() => {
-    logger.debug("会话数据变化", {
-      hasData: !!sessionsQuery?.data,
-      count: sessionsQuery?.data?.length
-    });
-
-    if (sessionsQuery?.data) {
-      logger.info("更新所有会话", { count: sessionsQuery.data.length });
-      setSessions(sessionsQuery.data || []);
-    }
-  }, [sessionsQuery?.data, setSessions]);
-
-  // 监听当前会话数据变化
-  useEffect(() => {
-    logger.debug("当前会话数据变化", {
-      hasData: !!currentSessionQuery?.data,
-      id: currentSessionQuery?.data?.id
-    });
-
-    if (currentSessionQuery?.data) {
-      logger.info("更新当前会话", {
-        id: currentSessionQuery.data.id,
-        messageCount: currentSessionQuery.data.messages?.length
-      });
-      setCurrentSession(currentSessionQuery.data || []);
-    }
-  }, [currentSessionQuery?.data, setCurrentSession]);
-
-  // 监听所有会话加载状态
-  useEffect(() => {
-    logger.debug("所有会话加载状态变化", {
-      isLoading: sessionsQuery?.isLoading
-    });
-
-    if (sessionsQuery?.isLoading !== undefined) {
-      setAllSessionLoading(sessionsQuery.isLoading);
-    }
-  }, [sessionsQuery?.isLoading, setAllSessionLoading]);
-
-  // 监听当前会话加载状态
-  useEffect(() => {
-    logger.debug("当前会话加载状态变化", {
-      isLoading: currentSessionQuery?.isLoading
-    });
-
-    if (currentSessionQuery?.isLoading !== undefined) {
-      setCurrentSessionLoading(currentSessionQuery.isLoading);
-    }
-  }, [currentSessionQuery?.isLoading, setCurrentSessionLoading]);
-
-  // 如果当前会话不存在，创建新会话
-  useEffect(() => {
-    if (currentSessionQuery?.error) {
-      logger.warn("当前会话不存在或加载失败", {
-        error: currentSessionQuery.error
-      });
-      createSession({ redirect: true });
-    }
-  }, [currentSessionQuery?.error]);
 
   // 创建新会话 
   const createSession = async (props: { redirect?: boolean }) => {
@@ -233,17 +127,15 @@ export function useSessionHooks() {
     }
   };
 
-  // 记录完成初始化
-  if (!initialized.current) {
-    logger.info("✅ useSessionHooks 初始化完成");
-    initialized.current = true;
-  }
+
 
   return {
     sessions,
+    setAllSessionLoading,
+    setCurrentSessionLoading,
     currentSession,
     isGenerating,
-
+    setSessions,
     createSession,
     removeMessage,
     addMessageToSession,

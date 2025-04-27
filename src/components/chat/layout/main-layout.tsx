@@ -9,7 +9,10 @@ import {
   FilterDialog,
   PromptsDialog,
 } from "@/components/chat/public";
-import { ChatInit } from "@/provider/chat-init";
+import { SessionsProvider } from "@/provider/sessions";
+import { PreferenceProvider } from "@/provider/preferences";
+
+import { ChatProvider } from "@/provider/chat";
 
 export type MainLayoutProps = {
   children: React.ReactNode;
@@ -17,15 +20,20 @@ export type MainLayoutProps = {
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="w-full h-[100dvh] bg-zinc-100 dark:bg-zinc-950 p-1 flex flex-row">
-      <ChatInit />
-      {children}
-      <Toaster />
-      <SettingsDialog />
-      <ConfirmDialog />
-      <FilterDialog />
-      <PromptsDialog />
-      <AssistantDialog />
-    </div>
+    <SessionsProvider>
+      <PreferenceProvider>
+        <ChatProvider>
+          <div className="w-full h-[100dvh] bg-zinc-100 dark:bg-zinc-950 p-1 flex flex-row">
+            {children}
+            <Toaster />
+            <SettingsDialog />
+            <ConfirmDialog />
+            <FilterDialog />
+            <PromptsDialog />
+            <AssistantDialog />
+          </div>
+        </ChatProvider>
+      </PreferenceProvider>
+    </SessionsProvider>
   );
 };
