@@ -8,7 +8,10 @@ export type TToolKey = (typeof toolKeys)[number];
 export type IconSize = "sm" | "md" | "lg";
 
 export type TToolArg = {
-    updatePreferences: Partial<TPreferences>;
+    updatePreferences: (
+        newPreferences: Partial<TPreferences>,
+        onSuccess?: (preference: TPreferences) => void
+    ) => Promise<void>;
     preferences: TPreferences;
     apiKeys: TApiKeys;
     sendToolResponse: (response: TToolResponse) => void;

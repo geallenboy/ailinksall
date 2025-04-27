@@ -1,7 +1,12 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { usePreferencesQuery } from "@/hooks/query/use-preferences-query";
 import { TPreferences, TBaseModel, TApiKeys } from "@/types/chat";
 import { usePreferenceStore } from "@/store/chat";
+import { defaultPreferences } from "@/config/chat/preferences";
+import { createLogger } from "@/utils/logger";
+
+// 创建偏好设置管理的日志记录器
+const logger = createLogger("usePreferenceHooks");
 
 /**
  * 自定义Hook，用于管理和同步用户的聊天偏好设置
@@ -9,175 +14,191 @@ import { usePreferenceStore } from "@/store/chat";
  * @returns 偏好设置相关的状态和操作方法
  */
 export function usePreferenceHooks() {
-  // 从Zustand store获取本地状态和纯状态操作方法
-  const {
-    preferences, // 当前偏好设置
-    apiKeys, // API密钥集合
-    isLoaded, // 是否已加载标志
-    setPreferences, // 更新本地偏好设置的方法
-    setApiKey, // 更新单个API密钥的方法
-    setApiKeys, // 批量更新API密钥的方法
-    setIsLoaded, // 设置加载状态的方法
-  } = usePreferenceStore();
+  logger.info("🚀 初始化 usePreferenceHooks");
+
+  // 使用 useRef 避免重复初始化和追踪渲染次数
+  const initialized = useRef(false);
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+
+  logger.debug(`第 ${renderCount.current} 次渲染`);
+
+  // 使用细粒度选择器从store获取状态和方法
+  logger.debug("获取 store 状态");
+  const preferences = usePreferenceStore(state => state.preferences);
+  const apiKeys = usePreferenceStore(state => state.apiKeys);
+  const setPreferences = usePreferenceStore(state => state.setPreferences);
+  const setApiKeys = usePreferenceStore(state => state.setApiKeys);
+
+  logger.debug("当前偏好设置状态", {
+    hasPreferences: !!preferences,
+    defaultAssistant: preferences?.defaultAssistant,
+    hasApiKeys: !!Object.keys(apiKeys || {}).length
+  });
 
   // 获取查询和变异方法
+  logger.debug("初始化查询");
   const {
-    preferencesQuery, // 查询偏好设置
-    apiKeysQuery, // 查询API密钥
-    setPreferencesMutation, // 更新偏好设置
-    setApiKeyMutation, // 更新API密钥
-    resetToDefaults: resetApiToDefaults, // 重置为默认设置的API方法
-    getPreferences, // 获取偏好设置的API方法
-    getApiKeys, // 获取API密钥的API方法
+    preferencesQuery,
+    apiKeysQuery,
+    setPreferencesMutation,
+    setApiKeyMutation,
   } = usePreferencesQuery();
 
+  logger.debug("查询状态", {
+    preferencesLoading: preferencesQuery.isLoading,
+    preferencesError: !!preferencesQuery.error,
+    apiKeysLoading: apiKeysQuery.isLoading,
+    apiKeysError: !!apiKeysQuery.error
+  });
 
-  // 从服务器初始化数据（如果尚未加载）
+  // 监听偏好设置数据变化
   useEffect(() => {
-    // 仅在未加载状态时从服务器获取数据
-    if (!isLoaded) {
-      const initializeData = async () => {
-        try {
-          // 并行获取偏好设置和API密钥
-          const [storedPreferences, storedApiKeys] = await Promise.all([
-            getPreferences(),
-            getApiKeys()
-          ]);
+    logger.debug("偏好设置数据变化", {
+      hasData: !!preferencesQuery.data
+    });
 
-          // 更新本地状态
-          if (storedPreferences) {
-            setPreferences(storedPreferences);
-          }
+    if (preferencesQuery.data) {
+      logger.info("更新偏好设置", {
+        defaultAssistant: preferencesQuery.data?.defaultAssistant
+      });
 
-          if (storedApiKeys) {
-            setApiKeys(storedApiKeys);
-          }
+      // 合并默认偏好设置和查询结果
+      const mergedPreferences = { ...defaultPreferences, ...preferencesQuery.data };
+      setPreferences(mergedPreferences);
 
-          // 标记为已加载
-          setIsLoaded(true);
-        } catch (error) {
-          console.error("Failed to initialize preference data:", error);
-          setIsLoaded(true); // 即使失败也标记为已加载，避免无限重试
-        }
-      };
-
-      initializeData();
+      logger.debug("偏好设置已更新", {
+        defaultModel: mergedPreferences.defaultPlugins,
+        messageLimit: mergedPreferences.messageLimit
+      });
     }
-  }, [isLoaded, setPreferences, setApiKeys, setIsLoaded]);
+  }, [preferencesQuery.data, setPreferences]);
 
-  // 当服务端偏好设置数据变化时更新本地状态
+  // 监听API密钥数据变化
   useEffect(() => {
-    if (preferencesQuery.data && preferencesQuery.isSuccess && isLoaded) {
-      setPreferences(preferencesQuery.data);
-    }
-  }, [preferencesQuery.data, preferencesQuery.isSuccess, setPreferences, isLoaded]);
+    logger.debug("API密钥数据变化", {
+      hasData: !!apiKeysQuery.data,
+      keyCount: Object.keys(apiKeysQuery.data || {}).length
+    });
 
-  // 当服务端API密钥数据变化时更新本地状态
-  useEffect(() => {
-    if (apiKeysQuery.data && apiKeysQuery.isSuccess && isLoaded) {
+    if (apiKeysQuery.data) {
+      logger.info("更新API密钥", {
+        keyCount: Object.keys(apiKeysQuery.data).length,
+        models: Object.keys(apiKeysQuery.data)
+      });
+
       setApiKeys(apiKeysQuery.data);
+
+      logger.debug("API密钥已更新");
     }
-  }, [apiKeysQuery.data, apiKeysQuery.isSuccess, setApiKeys, isLoaded]);
+  }, [apiKeysQuery.data, setApiKeys]);
 
   /**
    * 更新偏好设置
-   * 采用乐观更新策略：先更新本地，再提交服务器
-   * @param newPreferences 要更新的偏好设置（部分更新）
-   * @param onSuccess 更新成功后的回调
+   * @param newPreferences 部分偏好设置
+   * @param onSuccess 成功回调
    */
-  const updatePreferences = useCallback(async (
+  const updatePreferences = async (
     newPreferences: Partial<TPreferences>,
     onSuccess?: (preference: TPreferences) => void
   ) => {
-    // 先更新本地状态，提供即时反馈
-    setPreferences(newPreferences);
-
-    // 再提交到服务器
-    setPreferencesMutation.mutate(newPreferences, {
-      onSuccess: () => {
-        // 更新成功后执行回调
-        if (onSuccess) {
-          // 使用当前最新状态调用回调
-          const updatedPreferences = usePreferenceStore.getState().preferences;
-          onSuccess(updatedPreferences);
-        }
-      },
-      onError: (error) => {
-        console.error("Failed to update preferences:", error);
-        // 可以在这里添加错误提示或回滚操作
-      }
+    logger.info("更新偏好设置", {
+      keys: Object.keys(newPreferences)
     });
-  }, [setPreferences, setPreferencesMutation]);
+
+    try {
+      // 先在本地更新状态
+      const updatedPreferences = { ...preferences, ...newPreferences };
+      logger.debug("本地状态更新", {
+        defaultAssistant: updatedPreferences.defaultAssistant
+      });
+
+      setPreferences(updatedPreferences);
+
+      // 然后持久化到存储
+      logger.debug("提交偏好设置变更到服务器");
+      setPreferencesMutation.mutate(newPreferences, {
+        onSuccess: () => {
+          logger.info("偏好设置更新成功");
+          preferencesQuery.refetch();
+
+          if (onSuccess) {
+            logger.debug("调用成功回调");
+            onSuccess(updatedPreferences);
+          }
+        },
+        onError: (error) => {
+          logger.error("偏好设置更新失败", { error });
+        }
+      });
+    } catch (error) {
+      logger.error("偏好设置更新过程出错", { error });
+    }
+  };
 
   /**
    * 更新单个API密钥
-   * @param key 模型标识符
+   * @param key 模型类型
    * @param value API密钥值
    */
-  const updateApiKey = useCallback(async (key: TBaseModel, value: string) => {
-    // 先更新本地状态
-    setApiKey(key, value);
+  const updateApiKey = async (key: TBaseModel, value: string) => {
+    logger.info("更新API密钥", { model: key, hasValue: !!value });
 
-    // 再提交到服务器
-    setApiKeyMutation.mutate({ key, value }, {
-      onError: (error) => {
-        console.error(`Failed to update API key for ${key}:`, error);
-        // 可以在这里添加错误提示或回滚操作
-      }
-    });
-  }, [setApiKey, setApiKeyMutation]);
+    try {
+      // 先在本地更新状态
+      const updatedApiKeys = { ...apiKeys, [key]: value };
+      logger.debug("本地API密钥更新");
+      setApiKeys(updatedApiKeys);
+
+      // 然后持久化到存储
+      logger.debug("提交API密钥变更到服务器");
+      setApiKeyMutation.mutate(
+        { key, value },
+        {
+          onSuccess: () => {
+            logger.info("API密钥更新成功", { model: key });
+          },
+          onError: (error) => {
+            logger.error("API密钥更新失败", { model: key, error });
+          }
+        }
+      );
+    } catch (error) {
+      logger.error("API密钥更新过程出错", { model: key, error });
+    }
+  };
 
   /**
    * 批量更新API密钥
-   * @param newKeys 新的API密钥集合
+   * @param newApiKeys 新的API密钥对象
    */
-  const updateApiKeys = useCallback(async (newKeys: TApiKeys) => {
-    // 先更新本地状态
-    setApiKeys(newKeys);
-
-    // 再逐个提交到服务器
-    const updatePromises = Object.entries(newKeys).map(([key, value]) =>
-      setApiKey(key as TBaseModel, value)
-    );
+  const updateApiKeys = (newApiKeys: TApiKeys) => {
+    logger.info("批量更新API密钥", {
+      modelCount: Object.keys(newApiKeys).length,
+      models: Object.keys(newApiKeys)
+    });
 
     try {
-      await Promise.all(updatePromises);
+      setApiKeys(newApiKeys);
+      logger.debug("API密钥批量更新完成");
+
+      // 可以考虑添加批量更新API的持久化逻辑
     } catch (error) {
-      console.error("Failed to update API keys:", error);
-      // 可以在这里添加错误提示或回滚操作
+      logger.error("API密钥批量更新出错", { error });
     }
-  }, [setApiKeys]);
+  };
 
-  /**
-   * 重置所有设置为默认值
-   */
-  const handleResetToDefaults = useCallback(async () => {
-    try {
-      // 调用API重置服务器数据
-      await resetApiToDefaults();
-
-      // 获取默认偏好设置
-      const { defaultPreferences } = await import("@/config/chat/preferences");
-
-      // 重置本地状态
-      setPreferences(defaultPreferences);
-      setApiKeys({});
-
-      // 可选：重新获取服务器数据以确保同步
-      preferencesQuery.refetch();
-      apiKeysQuery.refetch();
-    } catch (error) {
-      console.error("Failed to reset preferences to defaults:", error);
-    }
-  }, [resetApiToDefaults, setPreferences, setApiKeys, preferencesQuery, apiKeysQuery]);
+  // 记录完成初始化
+  if (!initialized.current) {
+    logger.info("✅ usePreferenceHooks 初始化完成");
+    initialized.current = true;
+  }
 
   return {
-    preferences, // 当前偏好设置
-    apiKeys, // 当前API密钥
-    isLoading: preferencesQuery.isLoading || !isLoaded, // 加载状态
-    updatePreferences, // 更新偏好设置方法
-    updateApiKey, // 更新单个API密钥方法
-    updateApiKeys, // 批量更新API密钥方法
-    resetToDefaults: handleResetToDefaults, // 重置为默认设置方法
+    preferences,
+    apiKeys,
+    updatePreferences,
+    updateApiKey,
+    updateApiKeys,
   };
 }

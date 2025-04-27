@@ -27,6 +27,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
     isGenerating: false,
     openPromptsBotCombo: false,
     currentTools: [],
+    currentMessage: undefined,
 
     // 基础状态更新方法
     setContextValue: (value) => set({ contextValue: value }),
