@@ -3,7 +3,7 @@ import { DuckDuckGoSearch } from "@langchain/community/tools/duckduckgo_search";
 
 export async function POST(req: NextRequest, resp: NextResponse) {
   const { query } = await req.json();
-
+  console.log("query", query);
   if (!query) {
     return Response.json({ error: "No Query provided" }, { status: 401 });
   }
