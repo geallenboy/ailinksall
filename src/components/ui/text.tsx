@@ -37,12 +37,12 @@ export interface TypeProps
 export const Type = React.forwardRef<HTMLParagraphElement, TypeProps>(
   ({ className, size, textColor, weight, asChild = false, ...props }, ref) => {
     return (
-      <p
+      <div
         className={cn(typeVariants({ size, textColor, className, weight }))}
         ref={ref}
       >
         {props.children}
-      </p>
+      </div>
     );
   }
 );

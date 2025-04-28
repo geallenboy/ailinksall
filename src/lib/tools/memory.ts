@@ -32,10 +32,7 @@ const memoryTool = (args: any) => {
     func: async ({ memory, question }, runManager) => {
       try {
         const existingMemories = preferences?.memories;
-        const model = new ChatOpenAI({
-          model: "gpt-3.5-turbo",
-          apiKey: apiKeys.openai,
-        });
+
 
         const chain = RunnableSequence.from([
           PromptTemplate.fromTemplate(

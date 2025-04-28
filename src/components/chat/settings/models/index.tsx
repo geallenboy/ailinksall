@@ -2,6 +2,7 @@
 import { OpenAISettings } from "./openai";
 import { AnthropicSettings } from "./anthropic";
 import { GeminiSettings } from "./gemini";
+import { DeepSeekSettings } from "./deepseek"; // 新增导入
 import { Flex } from "@/components/ui/flex";
 import {
   Accordion,
@@ -37,6 +38,14 @@ export const ModelSettings = () => {
       iconType: "gemini",
       connected: !!apiKeys.gemini,
       settingsComponent: GeminiSettings,
+    },
+    // 添加 DeepSeek 设置
+    {
+      label: "DeepSeek",
+      value: "deepseek",
+      iconType: "deepseek",
+      connected: !!apiKeys.deepseek,
+      settingsComponent: DeepSeekSettings,
     },
   ];
 

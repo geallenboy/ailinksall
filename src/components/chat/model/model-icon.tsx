@@ -14,6 +14,7 @@ export type ModelIconType =
   | "duckduckgo_search"
   | "website_reader"
   | "ollama"
+  | "deepseek"
   | "custom";
 
 export type TModelIcon = {
@@ -34,6 +35,7 @@ export const ModelIcon = ({ type, size }: TModelIcon) => {
     duckduckgo_search: "/icons/duckduckgo.svg",
     website_reader: "/icons/website_reader.svg",
     ollama: "/icons/ollama.svg",
+    deepseek: "/icons/deepseek.svg",
   };
 
   if (type === "custom") {

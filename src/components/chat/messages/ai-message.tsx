@@ -1,6 +1,7 @@
 import { Quotes } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
 import * as Selection from "selection-popover";
+import React from "react"; // 添加这行导入
 
 import { useChatContext, useSessionsContext } from "@/context";
 import { TChatMessage, TToolResponse } from "@/types/chat";
@@ -65,7 +66,12 @@ export const AIMessage = ({ chatMessage, isLast }: TAIMessage) => {
     const Icon = toolUsed.smallIcon;
 
     return (
-      <>
+      <div
+        key={`tool-${tool.toolName}-${
+          tool?.toolArgs?.requestTime || Date.now()
+        }`}
+        className="tool-container"
+      >
         {toolUsed && (
           <Type
             size={"xs"}
@@ -87,7 +93,7 @@ export const AIMessage = ({ chatMessage, isLast }: TAIMessage) => {
         {toolUsed &&
           tool?.toolRenderArgs &&
           toolUsed?.renderUI?.(tool?.toolRenderArgs)}
-      </>
+      </div>
     );
   };
 
@@ -155,7 +161,13 @@ export const AIMessage = ({ chatMessage, isLast }: TAIMessage) => {
         items="start"
         className="w-full p-2 flex-1 overflow-hidden"
       >
-        {tools?.map(renderTool)}
+        {tools?.map((tool, index) => (
+          <React.Fragment
+            key={`tool-wrapper-${tool.toolName || "unknown"}-${index}`}
+          >
+            {renderTool(tool)}
+          </React.Fragment>
+        ))}
 
         {rawAI && (
           <Selection.Root>

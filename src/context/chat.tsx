@@ -52,7 +52,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
 
   // 更新当前消息
   const updateCurrentMessage = (update: Partial<TChatMessage>) => {
-    logger.debug("Updating current message", update);
+    logger.debug("正在更新当前消息", update);
 
     setCurrentMessage((prev) => {
       if (!!prev) {
@@ -70,7 +70,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
     const props = currentMessage;
 
     if (props) {
-      logger.debug("Message state changed", {
+      logger.debug("消息状态发生变化", {
         id: props.id,
         isLoading: props.isLoading,
         stop: props.stop,
@@ -113,7 +113,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
 
   // 停止生成
   const stopGeneration = () => {
-    logger.info("Stopping generation");
+    logger.info("正在停止生成");
     abortController?.abort("cancel");
   };
 
@@ -128,7 +128,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
     setAbortController(newAbortController);
 
     if (!input) {
-      logger.warn("No input provided");
+      logger.warn("未提供输入内容");
       return;
     }
 
@@ -212,7 +212,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
         callbacks
       );
     } catch (error) {
-      logger.error("Model run failed", { error });
+      logger.error("模型运行失败", { error });
       updateCurrentMessage({
         isLoading: false,
         stop: true,
@@ -223,7 +223,7 @@ export const ChatProvider = ({ children }: TChatProvider) => {
 
   // 处理模型运行
   const handleRunModel = async (props: TLLMInputProps, clear?: () => void) => {
-    logger.info("Handling run model request", {
+    logger.info("处理模型运行请求", {
       sessionId: props?.sessionId,
       hasInput: !!props?.input,
       assistantKey: props?.assistant?.key,
@@ -235,16 +235,16 @@ export const ChatProvider = ({ children }: TChatProvider) => {
 
     const assistantProps = getAssistantByKey(props?.assistant.key);
     if (!assistantProps) {
-      logger.warn("Assistant not found", { key: props?.assistant.key });
+      logger.warn("未找到助手", { key: props?.assistant.key });
       return;
     }
 
     const apiKey = apiKeys[assistantProps.model.baseModel];
     if (!apiKey && assistantProps.model.baseModel !== "ollama") {
-      logger.warn("API key missing", { model: assistantProps.model.baseModel });
+      logger.warn("缺少API密钥", { model: assistantProps.model.baseModel });
       toast({
-        title: "Ahh!",
-        description: "API key is missing. Please check your settings.",
+        title: "啊哦！",
+        description: "缺少API密钥。请检查您的设置。",
         variant: "destructive",
       });
       openSettings(assistantProps.model.baseModel);
@@ -273,16 +273,16 @@ export const ChatProvider = ({ children }: TChatProvider) => {
 
   // 发送消息
   const sendMessage = async () => {
-    logger.info("Sending message");
+    logger.info("正在发送消息");
 
     if (!editor || !currentSession?.id) {
-      logger.warn("Cannot send message - editor or session not available");
+      logger.warn("无法发送消息 - 编辑器或会话不可用");
       return;
     }
 
     const props = getAssistantByKey(preferences.defaultAssistant);
     if (!props) {
-      logger.warn("Default assistant not found");
+      logger.warn("未找到默认助手");
       return;
     }
 

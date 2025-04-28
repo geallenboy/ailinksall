@@ -2,6 +2,7 @@ import { ModelIcon } from "@/components/chat/icons/model-icon";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenAI } from "@langchain/openai";
+import { ChatDeepSeek } from "@langchain/deepseek";
 import { useQuery } from "@tanstack/react-query";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
 import { useMemo } from "react";
@@ -15,9 +16,38 @@ export const useModelList = () => {
   const assistantsProps = useAssistantsQuery();
   const ollamaModelsQuery = useQuery({
     queryKey: ["ollama-models"],
-    queryFn: () =>
-      fetch(`${preferences.ollamaBaseUrl}/api/tags`).then((res) => res.json()),
-    enabled: !!preferences,
+    queryFn: async () => {
+      try {
+        // 添加超时处理
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒超时
+
+        const response = await fetch(`${preferences.ollamaBaseUrl}/api/tags`, {
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`Ollama API 返回错误: ${response.status}`);
+        }
+
+        return response.json();
+      } catch (error: any) {
+        console.log(`Ollama 模型加载失败: ${error.message}`);
+        return { models: [] }; // 返回空数组而不是抛出错误
+      }
+    },
+    // 不自动重试
+    retry: false,
+    // 仅当 ollamaBaseUrl 存在且不是默认值时启用
+    enabled: !!(
+      preferences &&
+      preferences.ollamaBaseUrl &&
+      preferences.ollamaBaseUrl !== "http://localhost:11434"
+    ),
+    // 减少重新获取频率
+    staleTime: 5 * 60 * 1000, // 5分钟
   });
 
   const createInstance = async (model: TModel, apiKey: string) => {
@@ -26,8 +56,10 @@ export const useModelList = () => {
     const topP = preferences.topP || defaultPreferences.topP;
     const topK = preferences.topK || defaultPreferences.topK;
     const maxTokens = preferences.maxTokens || model.tokens;
+
     switch (model.baseModel) {
       case "openai":
+        // 保持现有代码不变
         return new ChatOpenAI({
           model: model.key,
           streaming: true,
@@ -37,7 +69,9 @@ export const useModelList = () => {
           topP,
           maxRetries: 2,
         });
+
       case "anthropic":
+        // 保持现有代码不变
         return new ChatAnthropic({
           model: model.key,
           streaming: true,
@@ -49,7 +83,9 @@ export const useModelList = () => {
           topK,
           maxRetries: 2,
         });
+
       case "gemini":
+        // 保持现有代码不变
         return new ChatGoogleGenerativeAI({
           model: model.key,
           apiKey,
@@ -63,7 +99,23 @@ export const useModelList = () => {
           topP,
           topK,
         });
+
+      case "deepseek":
+        // 添加 DeepSeek 模型支持
+        return new ChatDeepSeek({
+          model: model.key,
+          streaming: true,
+          apiKey,
+          temperature,
+          maxTokens, // 最大令牌数
+          topP,
+          maxRetries: 2,
+          // 可选：指定 DeepSeek API 的基础URL，如果您正在使用代理
+          // baseURL: `${window.location.origin}/api/deepseek/`,
+        });
+
       case "ollama":
+        // 保持现有代码不变
         return new ChatOllama({
           model: model.key,
           baseUrl: preferences.ollamaBaseUrl,
@@ -73,6 +125,7 @@ export const useModelList = () => {
           maxRetries: 2,
           temperature,
         });
+
       default:
         throw new Error("Invalid model");
     }
@@ -222,12 +275,106 @@ export const useModelList = () => {
       baseModel: "gemini",
       maxOutputTokens: 4095,
     },
+    // 添加 DeepSeek 模型
+    {
+      name: "DeepSeek-Coder",
+      key: "deepseek-coder",
+      tokens: 32768,
+      isNew: true,
+      inputPrice: 1.0,
+      outputPrice: 2.5,
+      plugins: ["web_search", "image_generation"],
+      icon: (size) => <ModelIcon size={size} type="deepseek" />,
+      baseModel: "deepseek",
+      maxOutputTokens: 4096,
+    },
+    {
+      name: "DeepSeek Chat",
+      key: "deepseek-chat",
+      tokens: 32000,
+      isNew: false,
+      inputPrice: 0.8,
+      outputPrice: 2.0,
+      plugins: ["web_search"],
+      icon: (size) => <ModelIcon size={size} type="deepseek" />,
+      baseModel: "deepseek",
+      maxOutputTokens: 4096,
+    },
+    {
+      name: "DeepSeek Chat-Light",
+      key: "deepseek-chat-light",
+      tokens: 16000,
+      isNew: false,
+      inputPrice: 0.3,
+      outputPrice: 0.8,
+      plugins: ["web_search"],
+      icon: (size) => <ModelIcon size={size} type="deepseek" />,
+      baseModel: "deepseek",
+      maxOutputTokens: 2048,
+    },
   ];
 
-  const allModels: TModel[] = useMemo(
-    () => [
-      ...models,
-      ...(ollamaModelsQuery.data?.models?.map(
+  const allModels: TModel[] = useMemo(() => {
+    const ollamaModels = ollamaModelsQuery.data?.models || [];
+
+    // 检查是否需要尝试加载 Ollama 模型
+    const shouldShowOllama =
+      preferences.ollamaBaseUrl &&
+      preferences.ollamaBaseUrl.trim() !== "" &&
+      !ollamaModelsQuery.isError;
+
+    // 基础模型列表
+    const baseModels = [...models];
+
+    // 如果不需要展示 Ollama 模型，直接返回基础模型
+    if (!shouldShowOllama) {
+      return baseModels;
+    }
+
+    // 为可能空的 Ollama 模型提供备选显示
+    if (ollamaModelsQuery.isLoading) {
+      // 添加加载中占位符
+      return [
+        ...baseModels,
+        {
+          name: "Ollama 模型加载中...",
+          key: "ollama-loading",
+          tokens: 0,
+          inputPrice: 0,
+          outputPrice: 0,
+          plugins: [],
+          icon: () => <ModelIcon size={"sm"} type="chathub" />,
+          baseModel: "ollama",
+          maxOutputTokens: 0,
+          isDisabled: true,
+        },
+      ];
+    }
+
+    // 添加找到的 Ollama 模型或显示未找到消息
+    if (ollamaModels.length === 0 && !ollamaModelsQuery.isLoading) {
+      // 未找到模型时添加提示
+      return [
+        ...baseModels,
+        {
+          name: "未检测到 Ollama 模型",
+          key: "ollama-not-found",
+          tokens: 0,
+          inputPrice: 0,
+          outputPrice: 0,
+          plugins: [],
+          icon: () => <ModelIcon size={"sm"} type="chathub" />,
+          baseModel: "ollama",
+          maxOutputTokens: 0,
+          isDisabled: true,
+        },
+      ];
+    }
+
+    // 正常返回所有模型
+    return [
+      ...baseModels,
+      ...(ollamaModels?.map(
         (model: any): TModel => ({
           name: model.name,
           key: model.name,
@@ -235,14 +382,18 @@ export const useModelList = () => {
           inputPrice: 0,
           outputPrice: 0,
           plugins: [],
-          icon: (size) => <ModelIcon size={size} type="openai" />,
+          icon: () => <ModelIcon size={"sm"} type="chathub" />,
           baseModel: "ollama",
           maxOutputTokens: 2048,
         })
       ) || []),
-    ],
-    [ollamaModelsQuery.data?.models]
-  );
+    ];
+  }, [
+    ollamaModelsQuery.data,
+    ollamaModelsQuery.isLoading,
+    ollamaModelsQuery.isError,
+    preferences.ollamaBaseUrl,
+  ]);
 
   const getModelByKey = (key: TModelKey) => {
     return allModels.find((model) => model.key === key);
@@ -258,6 +409,8 @@ export const useModelList = () => {
         return "gemini-pro";
       case "ollama":
         return "phi3:latest";
+      case "deepseek": // 新增
+        return "deepseek-chat";
     }
     return "gpt-3.5-turbo";
   };
@@ -305,6 +458,42 @@ export const useModelList = () => {
     );
   };
 
+  const ollamaStatus = useMemo(() => {
+    if (!preferences.ollamaBaseUrl || preferences.ollamaBaseUrl.trim() === "") {
+      return { status: "not-configured", message: "Ollama 未配置" };
+    }
+
+    if (ollamaModelsQuery.isLoading) {
+      return { status: "loading", message: "正在连接 Ollama 服务..." };
+    }
+
+    if (ollamaModelsQuery.isError) {
+      return {
+        status: "error",
+        message: "无法连接到 Ollama 服务，请确认服务已启动且地址正确",
+      };
+    }
+
+    if (
+      !ollamaModelsQuery.data?.models ||
+      ollamaModelsQuery.data.models.length === 0
+    ) {
+      return {
+        status: "empty",
+        message: "已连接 Ollama，但未找到任何模型",
+      };
+    }
+
+    return {
+      status: "connected",
+      message: `已连接 Ollama (${ollamaModelsQuery.data.models.length} 个模型)`,
+    };
+  }, [
+    preferences.ollamaBaseUrl,
+    ollamaModelsQuery.status,
+    ollamaModelsQuery.data,
+  ]);
+
   return {
     models: allModels,
     createInstance,
@@ -313,6 +502,7 @@ export const useModelList = () => {
     getAssistantIcon,
     assistants,
     getAssistantByKey,
+    ollamaStatus, // 新增
     ...assistantsProps,
   };
 };

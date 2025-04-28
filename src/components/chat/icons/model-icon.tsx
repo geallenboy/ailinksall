@@ -12,7 +12,8 @@ export type TModelIcon = {
     | "websearch"
     | "calculator"
     | "duckduckgo"
-    | "website_reader";
+    | "website_reader"
+    | "deepseek";
   size: "sm" | "md" | "lg";
 };
 export const ModelIcon = ({ type, size }: TModelIcon) => {
@@ -27,6 +28,7 @@ export const ModelIcon = ({ type, size }: TModelIcon) => {
     calculator: "/icons/calculator.svg",
     duckduckgo: "/icons/duckduckgo.svg",
     website_reader: "/icons/website_reader.svg",
+    deepseek: "/icons/deepseek.svg",
   };
 
   return (
