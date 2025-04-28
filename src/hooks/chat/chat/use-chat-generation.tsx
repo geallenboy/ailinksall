@@ -3,9 +3,9 @@
 import { v4 } from "uuid";
 import dayjs from "dayjs";
 import { useChatStore } from "@/store/chat/chat-store";
-import { usePreferenceHooks } from "@/hooks/chat/use-preference-hooks";
+import { usePreferenceContext, useSessionsContext } from "@/context";
 import { useModelList, useTools, useChatSessionQuery } from "@/hooks";
-import { useSessionHooks } from "../use-session-hooks";
+
 import { sortMessages } from "@/lib/chat/helper";
 import { TChatSession, TLLMInputProps, TToolResponse } from "@/types/chat";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
@@ -39,12 +39,12 @@ export function useChatGeneration() {
   } = useChatStore();
 
   // 获取会话相关功能
-  const { getSessionById } = useSessionHooks();
+  const { getSessionById } = useSessionsContext();
   const { updateSessionMutation: updateSessionMutationApi } =
     useChatSessionQuery();
 
   // 获取偏好设置和工具
-  const { apiKeys, preferences, updatePreferences } = usePreferenceHooks();
+  const { apiKeys, preferences, updatePreferences } = usePreferenceContext();
   const { getAssistantByKey, createInstance, getModelByKey } = useModelList();
   const { getToolByKey } = useTools();
 
@@ -55,7 +55,7 @@ export function useChatGeneration() {
   const { toast } = useToast();
 
   // 获取会话操作方法
-  const { addMessageToSession, setCurrentSession } = useSessionHooks();
+  const { addMessageToSession, setCurrentSession } = useSessionsContext();
 
   // 监听当前消息变化，同步更新会话状态
   useEffect(() => {
@@ -93,7 +93,7 @@ export function useChatGeneration() {
           };
         }
 
-        setCurrentSession(updatedSession);
+        // setCurrentSession(updatedSession);
       }
     }
     if (currentMessage?.stop) {

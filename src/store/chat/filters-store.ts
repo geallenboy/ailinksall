@@ -1,6 +1,7 @@
 
+import { useSessionsContext } from '@/context';
 import { create } from 'zustand';
-import { useSessionHooks } from '@/hooks/chat/use-session-hooks';
+
 
 
 /**
@@ -24,7 +25,7 @@ export const useFiltersStore = create<FiltersState>((set, get) => ({
     // 打开过滤面板并刷新会话列表
     open: () => {
         // 如果需要刷新会话列表，可以在这里调用 sessions store 的方法
-        const { refetchSessions } = useSessionHooks();
+        const { refetchSessions } = useSessionsContext();
         refetchSessions?.();
         set({ isFilterOpen: true });
     },

@@ -1,31 +1,37 @@
 "use client";
 
-import { Toaster } from "@/components/ui/toaster";
 import { SettingsDialog } from "@/components/chat/settings/settings-dialog";
 import { ConfirmDialog } from "@/components/public/confirm-dialog";
+import { FilterDialog, PromptsDialog } from "@/components/chat/public";
 import {
-  AssistantDialog,
-  FilterDialog,
-  PromptsDialog,
-} from "@/components/chat/public";
-import { ChatProvider, PreferenceProvider, SessionsProvider } from "@/context";
+  AssistantsProvider,
+  ChatProvider,
+  PreferenceProvider,
+  SessionsProvider,
+} from "@/context";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-export const ChatLayout = ({ children }: { children: React.ReactNode }) => {
+const ChatLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="w-full h-[100dvh] bg-zinc-100 dark:bg-zinc-950 p-1 flex flex-row">
-      <PreferenceProvider>
-        <SessionsProvider>
-          <ChatProvider>
-            {children}
-            <Toaster />
+      <TooltipProvider>
+        <PreferenceProvider>
+          <SessionsProvider>
+            <ChatProvider>
+              <AssistantsProvider>
+                {children}
+
+                <PromptsDialog />
+              </AssistantsProvider>
+              <FilterDialog />
+            </ChatProvider>
             <SettingsDialog />
-            <ConfirmDialog />
-            <FilterDialog />
-            <PromptsDialog />
-            <AssistantDialog />
-          </ChatProvider>
-        </SessionsProvider>
-      </PreferenceProvider>
+          </SessionsProvider>
+        </PreferenceProvider>
+        <ConfirmDialog />
+      </TooltipProvider>
     </div>
   );
 };
+
+export default ChatLayout;

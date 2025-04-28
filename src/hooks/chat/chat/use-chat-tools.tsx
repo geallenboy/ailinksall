@@ -2,7 +2,7 @@
 
 import { useChatStore } from "@/store/chat/chat-store";
 import { useTools } from "@/hooks";
-import { usePreferenceHooks } from "@/hooks/chat/use-preference-hooks";
+import { usePreferenceContext } from "@/context";
 import { TToolResponse } from "@/types/chat";
 
 /**
@@ -12,7 +12,7 @@ import { TToolResponse } from "@/types/chat";
 export function useChatTools() {
   const { currentTools, setCurrentTools } = useChatStore();
   const { getToolByKey } = useTools();
-  const { preferences, apiKeys } = usePreferenceHooks();
+  const { preferences, apiKeys } = usePreferenceContext();
 
   /**
    * 准备可用工具列表

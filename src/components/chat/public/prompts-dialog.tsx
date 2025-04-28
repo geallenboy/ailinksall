@@ -6,7 +6,7 @@ import { CreatePrompt } from "@/components/chat/prompts/create-prompt";
 import { PromptLibrary } from "@/components/chat/prompts/prompt-library";
 import { usePromptsStore } from "@/store/chat";
 import { usePrompts } from "@/hooks/chat";
-import { useChatHooks } from "@/hooks/chat/use-chat-hooks";
+import { useChatContext } from "@/context";
 
 export const PromptsDialog = () => {
   const {
@@ -28,7 +28,7 @@ export const PromptsDialog = () => {
     deletePromptMutation,
   } = usePrompts();
 
-  const { editor } = useChatHooks();
+  const { editor } = useChatContext();
 
   return (
     <Dialog

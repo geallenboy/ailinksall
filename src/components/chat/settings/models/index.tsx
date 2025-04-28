@@ -12,10 +12,10 @@ import {
 import { ModelIcon, ModelIconType } from "@/components/chat/model/model-icon";
 import { CheckmarkCircle02Icon, AlertCircleIcon } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
-import { usePreferenceHooks } from "@/hooks/chat";
+import { usePreferenceContext } from "@/context";
 
 export const ModelSettings = () => {
-  const { apiKeys } = usePreferenceHooks();
+  const { apiKeys } = usePreferenceContext();
   const modelSettingsData = [
     {
       label: "OpenAI",

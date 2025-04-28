@@ -15,11 +15,11 @@ import { Type } from "@/components/ui/text";
 import { Settings03Icon } from "@hugeicons/react";
 import { TPreferences } from "@/types/chat";
 import { defaultPreferences } from "@/config/chat/preferences";
-import { usePreferenceHooks } from "@/hooks/chat";
+import { usePreferenceContext } from "@/context";
 
 export const QuickSettings = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { preferences, updatePreferences } = usePreferenceHooks();
+  const { preferences, updatePreferences } = usePreferenceContext();
   const { getModelByKey, getAssistantByKey } = useModelList();
 
   const renderResetToDefault = (key: keyof TPreferences) => {

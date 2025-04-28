@@ -16,7 +16,7 @@ import { Type } from "@/components/ui/text";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Delete01Icon, Edit02Icon } from "@hugeicons/react";
 import { useChatSessionQuery } from "@/hooks";
-import { useSessionHooks } from "@/hooks/chat/use-session-hooks";
+import { useSessionsContext } from "@/context";
 
 export const HistoryItem = ({
   session,
@@ -25,7 +25,7 @@ export const HistoryItem = ({
   session: TChatSession;
   dismiss: () => void;
 }) => {
-  const { currentSession, createSession } = useSessionHooks();
+  const { currentSession, createSession } = useSessionsContext();
   const { getModelByKey, getAssistantByKey } = useModelList();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(session.title);

@@ -5,7 +5,7 @@ import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
-import { usePreferenceHooks } from "@/hooks/chat/use-preference-hooks";
+import { usePreferenceContext } from "@/context";
 import { TChatMessage } from "@/types/chat";
 
 /**
@@ -13,7 +13,7 @@ import { TChatMessage } from "@/types/chat";
  * 负责构建AI模型所需的提示模板
  */
 export function useChatPrompt() {
-  const { preferences } = usePreferenceHooks();
+  const { preferences } = usePreferenceContext();
 
   /**
    * 准备AI提示模板

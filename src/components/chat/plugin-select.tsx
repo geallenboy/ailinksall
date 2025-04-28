@@ -14,7 +14,7 @@ import { Flex } from "@/components/ui/flex";
 import { Type } from "@/components/ui/text";
 import { ConnectIcon } from "@hugeicons/react";
 import { TToolKey } from "@/types/chat";
-import { usePreferenceHooks } from "@/hooks/chat";
+import { usePreferenceContext } from "@/context";
 export type TPluginSelect = {
   selectedAssistantKey: string;
 };
@@ -23,7 +23,7 @@ export const PluginSelect = ({ selectedAssistantKey }: TPluginSelect) => {
   const [isOpen, setIsOpen] = useState(false);
   const { tools } = useTools();
   const { getAssistantByKey } = useModelList();
-  const { preferences, updatePreferences } = usePreferenceHooks();
+  const { preferences, updatePreferences } = usePreferenceContext();
   const availableTools = tools.filter((tool) => tool.showInMenu);
   const availableToolsKey = availableTools.map((tool) => tool.key);
   const [selectedPlugins, setSelectedPlugins] = useState<TToolKey[]>([]);

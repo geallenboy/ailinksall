@@ -22,13 +22,13 @@ const COMPONENT_LOG_LEVEL: Record<string, LogLevel> = {
     // 生产环境下默认关闭调试日志
     'ChatInput': 'error',
     'useSessionHooks': 'error',
-    'usePreferenceHooks': 'error',
-    'useChatHooks': 'error',
+    'usePreferenceContext': 'error',
+    'useChatContext': 'error',
     // 开发环境下可单独开启某些组件的调试
     ...(process.env.NODE_ENV !== 'production' ? {
         'useSessionHooks': 'info',
-        'usePreferenceHooks': 'info',
-        'useChatHooks': 'info'
+        'usePreferenceContext': 'info',
+        'useChatContext': 'info'
     } : {})
 };
 

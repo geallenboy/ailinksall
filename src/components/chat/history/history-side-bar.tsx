@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Flex } from "@/components/ui/flex";
 import { Tooltip } from "@/components/ui/tooltip";
 import { HistoryItem } from "./history-item";
-import { useSessionHooks } from "@/hooks/chat/use-session-hooks";
+import { useSessionsContext } from "@/context";
 
 export const HistorySidebar = () => {
-  const { sessions } = useSessionHooks();
+  const { sessions } = useSessionsContext();
   const [open, setOpen] = useState(false);
 
   return (

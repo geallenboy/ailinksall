@@ -1,9 +1,9 @@
-import { usePreferenceHooks } from "@/hooks/chat";
+import { usePreferenceContext } from "@/context";
 import { SettingCard } from "./setting-card";
 import { SettingsContainer } from "./settings-container";
 
 export const MemorySettings = () => {
-  const { preferences } = usePreferenceHooks();
+  const { preferences } = usePreferenceContext();
 
   const renderMemory = (memory: string) => {
     return (

@@ -12,11 +12,11 @@ import { SettingCard } from "./setting-card"; // 导入设置卡片组件
 import { SettingsContainer } from "./settings-container"; // 导入设置容器组件
 import { TPreferences } from "@/types/chat"; // 导入聊天偏好设置类型
 import { defaultPreferences } from "@/config/chat/preferences"; // 导入默认偏好设置
-import { usePreferenceHooks } from "@/hooks/chat"; // 导入偏好设置钩子
+import { usePreferenceContext } from "@/context";
 
 export const CommonSettings = () => {
   // 使用自定义Hook获取偏好设置和更新函数
-  const { preferences, updatePreferences } = usePreferenceHooks();
+  const { preferences, updatePreferences } = usePreferenceContext();
 
   /**
    * 渲染重置到默认值的按钮组件

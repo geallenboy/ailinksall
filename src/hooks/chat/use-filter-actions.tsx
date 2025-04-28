@@ -9,7 +9,8 @@ import {
 import { useFiltersStore, useSessionStore } from "@/store/chat";
 import { Button } from "@/components/ui/button";
 import { useChatSessionQuery } from "../query/use-chat-session-query";
-import { useSessionHooks } from "./use-session-hooks";
+import { useSessionsContext } from "@/context";
+
 /**
  * 构建过滤器动作项，包括新建会话、切换主题、删除当前会话
  * 抽离为独立函数以便在不同组件中复用
@@ -20,7 +21,7 @@ export const useFilterActions = () => {
   const { removeSessionMutation } = useChatSessionQuery();
   // 获取会话相关操作
   const { currentSession } = useSessionStore();
-  const { createSession } = useSessionHooks();
+  const { createSession } = useSessionsContext();
   // 获取提示通知功能
   const { toast, dismiss: dismissToast } = useToast();
 

@@ -13,7 +13,7 @@ import { TPreferences } from "@/types/chat";
 import { defaultPreferences } from "@/config/chat/preferences";
 import { useChatSessionQuery } from "@/hooks";
 import { useSettingsStore } from "@/store/chat";
-import { usePreferenceHooks, useSessionHooks } from "@/hooks/chat";
+import { usePreferenceContext, useSessionsContext } from "@/context";
 
 const apiSchema = z.object({
   openai: z.string().optional(),
@@ -104,10 +104,10 @@ export const Data = () => {
   const { dismiss } = useSettingsStore();
   const { toast } = useToast();
 
-  const { sessions, createSession } = useSessionHooks();
+  const { sessions, createSession } = useSessionsContext();
   const { clearSessionsMutation } = useChatSessionQuery();
   const { preferences, apiKeys, updatePreferences, updateApiKeys } =
-    usePreferenceHooks();
+    usePreferenceContext();
 
   function handleFileSelect(event: ChangeEvent<HTMLInputElement>) {
     const input = event.target as HTMLInputElement;

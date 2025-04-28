@@ -23,14 +23,14 @@ import { Flex } from "@/components/ui/flex";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useSettingsStore } from "@/store/chat/settings-store";
 import { usePromptsStore } from "@/store/chat";
-import { useSessionHooks } from "@/hooks/chat";
+import { useSessionsContext } from "@/context";
 
 export const Navbar = memo(() => {
   // 使用更细粒度的选择器，只订阅真正需要的状态
   const { theme, setTheme } = useTheme();
   const openSettings = useSettingsStore((state) => state.open);
   const openPrompts = usePromptsStore((state) => state.open);
-  const { createSession } = useSessionHooks();
+  const { createSession } = useSessionsContext();
   const [isOpen, setIsOpen] = useState(false);
 
   // 使用 useCallback 缓存事件处理函数

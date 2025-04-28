@@ -16,7 +16,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useChatStore } from "@/store/chat";
 
 export type TPromptLibrary = {
   open: boolean;
@@ -41,8 +40,6 @@ export const PromptLibrary = ({
   onEdit,
   onDelete,
 }: TPromptLibrary) => {
-  const { editor } = useChatStore();
-
   return (
     <Command>
       <div className="w-full p-1">

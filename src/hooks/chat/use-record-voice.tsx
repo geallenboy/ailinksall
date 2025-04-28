@@ -8,14 +8,14 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { AudioWaveSpinner } from "@/components/ui/audio-wave";
 import { RecordIcon, StopIcon } from "@hugeicons/react";
 import { useSettingsStore } from "@/store/chat";
-import { usePreferenceHooks } from "./use-preference-hooks";
+import { usePreferenceContext } from "@/context";
 
 export const useRecordVoice = () => {
   const [text, setText] = useState<string>("");
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const { preferences, apiKeys } = usePreferenceHooks();
+  const { preferences, apiKeys } = usePreferenceContext();
   const { open: openSettings } = useSettingsStore();
   const { toast } = useToast();
 

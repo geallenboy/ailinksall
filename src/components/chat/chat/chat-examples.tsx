@@ -3,12 +3,12 @@ import { motion } from "framer-motion";
 import { Flex } from "@/components/ui/flex";
 import { Type } from "@/components/ui/text";
 import { usePrompts } from "@/hooks/chat";
-import { useChatHooks } from "@/hooks/chat/use-chat-hooks";
+import { useChatContext } from "@/context";
 
 export type TChatExamples = {};
 export const ChatExamples = () => {
   const { allPrompts } = usePrompts();
-  const { editor } = useChatHooks();
+  const { editor } = useChatContext();
   if (!allPrompts?.length) {
     return null;
   }

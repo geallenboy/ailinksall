@@ -25,7 +25,12 @@ import dayjs from "dayjs";
 import { createContext, useContext, useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { usePreferenceContext, useSessionsContext } from "@/context";
-import { TAssistant, TChatMessage, TLLMInputProps, TToolResponse } from "@/types/chat";
+import {
+  TAssistant,
+  TChatMessage,
+  TLLMInputProps,
+  TToolResponse,
+} from "@/types/chat";
 import { useModelList, useTools } from "@/hooks";
 import { useSettingsStore } from "@/store/chat";
 import { defaultPreferences } from "@/config/chat/preferences";
