@@ -2,44 +2,14 @@
 
 import { useChatStore } from "@/store/chat/chat-store";
 import { usePreferenceHooks } from "@/hooks/chat/use-preference-hooks";
-import { useModelList, useTools } from "@/hooks";
+import { useModelList } from "@/hooks";
 import { useToast } from "@/components/ui/use-toast";
 import { useSessionHooks } from "./use-session-hooks";
-import {
-  usePreferenceStore,
-  useSessionStore,
-  useSettingsStore,
-} from "@/store/chat";
-import { removeExtraSpaces, sortMessages } from "@/lib/chat/helper";
-import { Document } from "@tiptap/extension-document";
-import { HardBreak } from "@tiptap/extension-hard-break";
-import { Highlight } from "@tiptap/extension-highlight";
-import { Paragraph } from "@tiptap/extension-paragraph";
-import { Placeholder } from "@tiptap/extension-placeholder";
-import { Text } from "@tiptap/extension-text";
-import { useEditor } from "@tiptap/react";
-import {
-  DisableEnter,
-  ShiftEnterToLineBreak,
-} from "@/lib/chat/tiptap-extension";
-import {
-  TAssistant,
-  TChatMessage,
-  TLLMInputProps,
-  TToolResponse,
-} from "@/types/chat";
-import {
-  BaseMessagePromptTemplateLike,
-  ChatPromptTemplate,
-  MessagesPlaceholder,
-} from "@langchain/core/prompts";
-import { v4 } from "uuid";
-import { defaultPreferences } from "@/config/chat/preferences";
-import dayjs from "dayjs";
-import { AIMessage, HumanMessage } from "@langchain/core/messages";
-import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
-import { Serialized } from "@langchain/core/load/serializable";
-import { LLMResult } from "@langchain/core/outputs";
+import { useSettingsStore } from "@/store/chat";
+import { removeExtraSpaces } from "@/lib/chat/helper";
+import { useChatEditor } from "./chat/use-chat-editor";
+import { useChatGeneration } from "./chat/use-chat-generation";
+import { TLLMInputProps } from "@/types/chat";
 
 /**
  * 聊天功能主入口Hook
@@ -47,434 +17,113 @@ import { LLMResult } from "@langchain/core/outputs";
  */
 export function useChatHooks() {
   // 从各个Hook获取功能和状态
-  const setOpenPromptsBotCombo = useChatStore(
-    (state) => state.setOpenPromptsBotCombo
-  );
-  const currentMessage = useChatStore.getState().currentMessage;
-  const setCurrentMessage = useChatStore((state) => state.setCurrentMessage);
-  const contextValue = useChatStore((state) => state.contextValue);
-  const isGenerating = useChatStore((state) => state.isGenerating);
-  const openPromptsBotCombo = useChatStore(
-    (state) => state.openPromptsBotCombo
-  );
-  const setAbortController = useChatStore((state) => state.setAbortController);
-  const currentTools = useChatStore((state) => state.currentTools);
-  const setCurrentTools = useChatStore((state) => state.setCurrentTools);
-  const setContextValue = useChatStore((state) => state.setContextValue);
-  const abortController = useChatStore((state) => state.abortController);
-  const setIsGenerating = useChatStore((state) => state.setIsGenerating);
-  const currentSession = useSessionStore.getState().currentSession;
+  const {
+    contextValue,
+    isGenerating,
+    openPromptsBotCombo,
+    setContextValue,
+    setOpenPromptsBotCombo,
+    abortController,
+  } = useChatStore();
 
-  const { getSessionById, refetchSessions } = useSessionHooks();
-  const { createInstance, getModelByKey, getAssistantByKey } = useModelList();
-  const preferences = usePreferenceStore((state) => state.preferences);
-  const apiKeys = usePreferenceStore((state) => state.apiKeys);
-  const { updatePreferences } = usePreferenceHooks();
-  const openSettings = useSettingsStore((state) => state.open);
+  // 获取当前会话信息
+  const { currentSession, refetchSessions } = useSessionHooks();
 
-  const { toast } = useToast();
-  const { getToolByKey } = useTools();
+  // 获取偏好设置和API密钥
+  const { apiKeys, preferences } = usePreferenceHooks();
 
-  const updateCurrentMessage = (update: Partial<TChatMessage>) => {
-    if (currentMessage) {
-      setCurrentMessage({
-        ...currentMessage,
-        ...update,
-      });
-    }
-  };
+  // 获取模型和助手信息
+  const { getAssistantByKey } = useModelList();
 
+  // 获取设置面板控制函数
+  const { open: openSettings } = useSettingsStore();
+
+  // 获取编辑器实例和控制方法
+  const { editor } = useChatEditor();
+
+  // 获取消息处理方法
   const stopGeneration = () => {
     abortController?.abort("cancel");
   };
 
-  const preparePrompt = async ({
-    context,
-    image,
-    history,
-    assistant,
-  }: {
-    context?: string;
-    image?: string;
-    history: TChatMessage[];
-    assistant: TAssistant;
-  }) => {
-    const hasPreviousMessages = history?.length > 0;
-    const systemPrompt = assistant.systemPrompt;
+  // 获取消息生成方法
+  const { runModel, generateTitleForSession } = useChatGeneration();
 
-    const system: BaseMessagePromptTemplateLike = [
-      "system",
-      `${systemPrompt}\n Things to remember: \n ${preferences.memories.join(
-        "\n"
-      )}\n ${
-        hasPreviousMessages
-          ? `You can also refer to these previous conversations`
-          : ``
-      }`,
-    ];
+  // 使用通知组件
+  const { toast } = useToast();
 
-    const messageHolders = new MessagesPlaceholder("chat_history");
-
-    const userContent = `{input}\n\n${
-      context
-        ? `Answer user's question based on the following context: """{context}"""`
-        : ``
-    } `;
-
-    const user: BaseMessagePromptTemplateLike = [
-      "user",
-      image
-        ? [
-            {
-              type: "text",
-              content: userContent,
-            },
-            {
-              type: "image_url",
-              image_url: image,
-            },
-          ]
-        : userContent,
-    ];
-
-    const prompt = ChatPromptTemplate.fromMessages([
-      system,
-      messageHolders,
-      user,
-      ["placeholder", "{agent_scratchpad}"],
-    ]);
-
-    return prompt;
-  };
-
-  const runModel = async (props: TLLMInputProps) => {
-    setIsGenerating(true);
-    setCurrentMessage(undefined);
-    setCurrentTools([]);
-
-    const { sessionId, messageId, input, context, image, assistant } = props;
-    const currentAbortController = new AbortController();
-    setAbortController(currentAbortController);
-    const selectedSession = await getSessionById(sessionId);
-
-    if (!input) {
-      return;
-    }
-
-    const newMessageId = messageId || v4();
-    const modelKey = assistant.baseModel;
-
-    const allPreviousMessages =
-      selectedSession?.messages?.filter((m) => m.id !== messageId) || [];
-    const chatHistory = sortMessages(allPreviousMessages, "createdAt");
-    const plugins = preferences.defaultPlugins || [];
-    const messageLimit =
-      preferences.messageLimit || defaultPreferences.messageLimit;
-
-    setCurrentMessage({
-      inputProps: props,
-      id: newMessageId,
-      sessionId,
-      rawHuman: input,
-      createdAt: dayjs().toISOString(),
-      isLoading: true,
-    });
-
-    const selectedModelKey = getModelByKey(modelKey);
-    if (!selectedModelKey) {
-      throw new Error("Model not found");
-    }
-
-    const apiKey = apiKeys[selectedModelKey?.baseModel];
-
-    if (!apiKey) {
-      updateCurrentMessage({
-        isLoading: false,
-        stop: true,
-        stopReason: "apikey",
-      });
-
-      return;
-    }
-
-    const prompt = await preparePrompt({
-      context: context,
-      image,
-      history:
-        selectedSession?.messages?.filter((m) => m.id !== messageId) || [],
-      assistant,
-    });
-
-    const availableTools =
-      selectedModelKey?.plugins
-        ?.filter((p) => {
-          return plugins.includes(p);
-        })
-        ?.map((p) =>
-          getToolByKey(p)?.tool({
-            updatePreferences,
-            preferences,
-            apiKeys,
-            sendToolResponse: (arg: TToolResponse) => {
-              setCurrentTools((tools) =>
-                tools.map((t) => {
-                  if (t.toolName === arg.toolName) {
-                    return {
-                      ...arg,
-                      toolLoading: false,
-                    };
-                  }
-                  return t;
-                })
-              );
-            },
-          })
-        )
-        ?.filter((t): t is any => !!t) || [];
-
-    console.log("Available tools", availableTools);
-
-    const selectedModel = await createInstance(selectedModelKey, apiKey);
-
-    const previousAllowedChatHistory = chatHistory
-      .slice(0, messageLimit)
-      .reduce(
-        (acc: (HumanMessage | AIMessage)[], { rawAI, rawHuman, image }) => {
-          if (rawAI && rawHuman) {
-            return [...acc, new HumanMessage(rawHuman), new AIMessage(rawAI)];
-          } else {
-            return [...acc];
-          }
-        },
-        []
-      );
-
-    let agentExecutor: AgentExecutor | undefined;
-
-    // Creating a copy of the model
-    const modifiedModel = Object.create(Object.getPrototypeOf(selectedModel));
-
-    Object.assign(modifiedModel, selectedModel);
-
-    modifiedModel.bindTools = (tools: any[], options: any) => {
-      return selectedModel.bindTools?.(tools, {
-        ...options,
-        signal: currentAbortController?.signal,
-      });
-    };
-
-    if (availableTools?.length) {
-      const agentWithTool = await createToolCallingAgent({
-        llm: modifiedModel as any,
-        tools: availableTools,
-        prompt: prompt as any,
-        streamRunnable: true,
-      });
-
-      console.log("aGENT WITH TOOL", agentWithTool);
-
-      agentExecutor = new AgentExecutor({
-        agent: agentWithTool as any,
-        tools: availableTools,
-      });
-    }
-    const chainWithoutTools = prompt.pipe(
-      selectedModel.bind({
-        signal: currentAbortController?.signal,
-      }) as any
-    );
-
-    let streamedMessage = "";
-
-    const executor =
-      !!availableTools?.length && agentExecutor
-        ? agentExecutor
-        : chainWithoutTools;
-
-    try {
-      const stream: any = await executor.invoke(
-        {
-          chat_history: previousAllowedChatHistory || [],
-          context,
-          input,
-        },
-        {
-          callbacks: [
-            {
-              handleLLMStart: async (llm: Serialized, prompts: string[]) => {},
-              handleToolStart(
-                tool,
-                input,
-                runId,
-                parentRunId,
-                tags,
-                metadata,
-                name
-              ) {
-                console.log(
-                  "handleToolStart",
-                  tool,
-                  input,
-                  runId,
-                  parentRunId,
-                  tags,
-                  metadata,
-                  name
-                );
-
-                name &&
-                  setCurrentTools((tools) => [
-                    ...tools,
-                    { toolName: name, toolLoading: true },
-                  ]);
-              },
-              handleToolError(err, runId, parentRunId, tags) {},
-              handleToolEnd(output, runId, parentRunId, tags) {},
-
-              handleLLMEnd: async (output: LLMResult) => {
-                console.log("handleLLMEnd", output);
-              },
-              handleLLMNewToken: async (token: string) => {
-                streamedMessage += token;
-                updateCurrentMessage({
-                  isLoading: true,
-                  rawAI: streamedMessage,
-                  stop: false,
-                  stopReason: undefined,
-                });
-              },
-              handleChainEnd: async (output: any) => {},
-              handleLLMError: async (err: Error) => {
-                console.error("handleLLMError", err);
-                if (!currentAbortController?.signal.aborted) {
-                  toast({
-                    title: "错误",
-                    description: "发生了一些问题",
-                    variant: "destructive",
-                  });
-                }
-
-                updateCurrentMessage({
-                  isLoading: false,
-                  rawHuman: input,
-                  rawAI: streamedMessage,
-                  stop: true,
-                  stopReason: currentAbortController?.signal.aborted
-                    ? "cancel"
-                    : "error",
-                });
-              },
-            },
-          ],
-        }
-      );
-
-      updateCurrentMessage({
-        rawHuman: input,
-        rawAI: stream?.content || stream?.output,
-        isLoading: false,
-        stop: true,
-        stopReason: "finish",
-      });
-    } catch (err) {
-      updateCurrentMessage({
-        isLoading: false,
-        stop: true,
-        stopReason: "error",
-      });
-      console.error(err);
-    }
-  };
-
+  /**
+   * 处理模型运行
+   * 验证输入、检查API密钥、准备上下文并运行模型
+   */
   const handleRunModel = async (props: TLLMInputProps, clear?: () => void) => {
     if (!props?.input) {
       return;
     }
 
-    const assitantprops = getAssistantByKey(props?.assistant.key);
-
-    if (!assitantprops) {
+    // 获取选中的助手信息
+    const assistantProps = getAssistantByKey(props?.assistant.key);
+    if (!assistantProps) {
       return;
     }
 
-    const apiKey = apiKeys[assitantprops.model.baseModel];
-
-    if (!apiKey && assitantprops.model.baseModel !== "ollama") {
+    // 检查API密钥是否存在
+    const apiKey = apiKeys[assistantProps.model.baseModel];
+    if (!apiKey && assistantProps.model.baseModel !== "ollama") {
       toast({
         title: "Ahh!",
         description: "API key is missing. Please check your settings.",
         variant: "destructive",
       });
-      openSettings(assitantprops.model.baseModel);
+      openSettings(assistantProps.model.baseModel);
       return;
     }
 
+    // 清空上下文和输入框
     setContextValue("");
     clear?.();
+    console.log("Running model with props:", {
+      sessionId: props?.sessionId?.toString(),
+      input: removeExtraSpaces(props?.input),
+      context: removeExtraSpaces(props?.context),
+      image: props?.image,
+      assistant: assistantProps.assistant,
+      messageId: props?.messageId,
+    });
+    // 运行模型
     await runModel({
       sessionId: props?.sessionId?.toString(),
       input: removeExtraSpaces(props?.input),
       context: removeExtraSpaces(props?.context),
       image: props?.image,
-      assistant: assitantprops.assistant,
+      assistant: assistantProps.assistant,
       messageId: props?.messageId,
     });
+
+    // 刷新会话列表
     refetchSessions?.();
   };
 
-  const editor = useEditor({
-    extensions: [
-      Document,
-      Paragraph,
-      Text,
-      Placeholder.configure({
-        placeholder: "输入 / 或询问任何问题...",
-      }),
-      ShiftEnterToLineBreak,
-      Highlight.configure({
-        HTMLAttributes: {
-          class: "prompt-highlight",
-        },
-      }),
-      HardBreak,
-      DisableEnter,
-    ],
-    content: ``,
-    autofocus: true,
-    onTransaction(props) {
-      const { editor } = props;
-      const text = editor.getText();
-      const html = editor.getHTML();
-      if (text === "/") {
-        setOpenPromptsBotCombo(true);
-      } else {
-        const newHTML = html.replace(
-          /{{{{(.*?)}}}}/g,
-          ` <mark class="prompt-highlight">$1</mark> `
-        );
-
-        if (newHTML !== html) {
-          editor.commands.setContent(newHTML, true, {
-            preserveWhitespace: true,
-          });
-        }
-        setOpenPromptsBotCombo(false);
-      }
-    },
-
-    parseOptions: {
-      preserveWhitespace: "full",
-    },
-  });
-
+  /**
+   * 发送消息
+   * 从编辑器获取用户输入并发送给AI助手
+   */
   const sendMessage = async () => {
+    // 验证必要条件
     if (!editor || !currentSession?.id) {
+      console.warn("无法发送消息: 编辑器或会话ID不存在");
       return;
     }
+
+    // 获取当前选中的助手
     const props = getAssistantByKey(preferences.defaultAssistant);
+
     if (!props) {
+      console.warn("无法发送消息: 未找到助手配置");
       return;
     }
+
+    // 调用模型处理输入
     handleRunModel(
       {
         input: editor.getText(),
@@ -483,6 +132,7 @@ export function useChatHooks() {
         assistant: props.assistant,
       },
       () => {
+        // 成功发送后清空编辑器并聚焦
         editor.commands.clearContent();
         editor.commands.insertContent("");
         editor.commands.focus("end");
@@ -490,17 +140,17 @@ export function useChatHooks() {
     );
   };
 
+  // 返回聊天所需的状态和方法
   return {
-    currentMessage,
-    currentTools,
     editor,
-    sendMessage,
-    handleRunModel,
-    openPromptsBotCombo,
-    setOpenPromptsBotCombo,
     contextValue,
     isGenerating,
-    setContextValue,
+    openPromptsBotCombo,
+    sendMessage,
+    handleRunModel,
     stopGeneration,
+    setContextValue,
+    setOpenPromptsBotCombo,
+    generateTitleForSession,
   };
 }

@@ -1,24 +1,27 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { TChatMessage } from "@/types/chat";
 import { useSessionStore } from "@/store/chat";
 import { useChatSessionQuery } from "../query";
-import { createLogger } from "@/utils/logger";
-
-// 创建会话管理的日志记录器
-const logger = createLogger("useSessionHooks");
 
 export function useSessionHooks() {
   const { sessionId } = useParams();
-  const setAllSessionLoading = useSessionStore(state => state.setAllSessionLoading);
-  const setCurrentSessionLoading = useSessionStore(state => state.setCurrentSessionLoading);
-  const sessions = useSessionStore(state => state.sessions);
-  const currentSession = useSessionStore(state => state.currentSession);
-  const isGenerating = useSessionStore(state => state.isGenerating);
-  const setSessions = useSessionStore(state => state.setSessions);
-  const setCurrentSession = useSessionStore(state => state.setCurrentSession);
-  const setGenerating = useSessionStore(state => state.setGenerating);
 
+
+  const {
+    sessions,
+    currentSession,
+    isGenerating,
+    isAllSessionLoading,
+    isCurrentSessionLoading,
+    setSessions,
+    setCurrentSession,
+    setGenerating,
+    setAllSessionLoading,
+    setCurrentSessionLoading,
+  } = useSessionStore();
+
+  // 获取数据处理方法
   const {
     sessionsQuery,
     createNewSessionMutation,
@@ -27,59 +30,72 @@ export function useSessionHooks() {
     getSessionByIdMutation,
     getSessionByIdQuery,
   } = useChatSessionQuery(sessionId?.toString());
-  const currentSessionQuery = getSessionByIdQuery;
 
+  // 监听所有会话数据变化
+  useEffect(() => {
+    if (sessionsQuery.data) {
+      setSessions(sessionsQuery.data);
+      setAllSessionLoading(sessionsQuery.isLoading);
+    }
 
-  // 创建新会话 
-  const createSession = async (props: { redirect?: boolean }) => {
-    const { redirect } = props;
-    logger.info("创建新会话", { redirect });
+  }, [
+    sessionsQuery.data,
+    sessionsQuery.isLoading,
+  ]);
 
+  // 监听当前会话数据变化
+  useEffect(() => {
+    if (getSessionByIdQuery.data) {
+      setCurrentSession(getSessionByIdQuery.data);
+      setCurrentSessionLoading(getSessionByIdQuery.isLoading);
+    }
+
+  }, [
+    getSessionByIdQuery.data,
+    getSessionByIdQuery.isLoading,
+
+  ]);
+
+  // 如果当前会话不存在，创建新会话
+  useEffect(() => {
+    if (getSessionByIdQuery.error && sessionId) {
+      createSession({ redirect: true });
+    }
+  }, [getSessionByIdQuery.error, sessionId]);
+
+  // 创建新会话
+  const createSession = async (options?: { redirect?: boolean }) => {
     try {
-      await createNewSessionMutation.mutateAsync(undefined, {
-        onSuccess: (data) => {
-          logger.info("会话创建成功", { id: data.id });
-          if (redirect) {
-            logger.debug("重定向到新会话");
-            window.open(`/chat/${data.id}`, "_self");
-          }
-        },
-        onError: (error) => {
-          logger.error("会话创建失败", { error });
-        }
-      });
+      const newSession = await createNewSessionMutation.mutateAsync(undefined);
+
+      if (options?.redirect && newSession) {
+        // 使用客户端导航而不是刷新整个页面
+        window.open(`/chat/${newSession.id}`, "_self");
+      }
+
+      return newSession;
     } catch (error) {
-      logger.error("会话创建过程出错", { error });
+      console.error("Failed to create session:", error);
+      return undefined;
     }
   };
 
   // 从会话中移除消息
-  const removeMessage = (messageId: string) => {
-    logger.info("移除消息", { messageId });
-
+  const removeMessage = async (messageId: string) => {
     if (!currentSession?.id) {
-      logger.warn("无法移除消息，当前无活动会话");
       return;
     }
 
     try {
-      removeMessageByIdMutation.mutate(
-        {
-          sessionId: currentSession?.id,
-          messageId,
-        },
-        {
-          onSuccess: () => {
-            logger.info("消息移除成功", { messageId });
-            currentSessionQuery?.refetch();
-          },
-          onError: (error) => {
-            logger.error("消息移除失败", { error, messageId });
-          }
-        }
-      );
+      await removeMessageByIdMutation.mutateAsync({
+        sessionId: currentSession.id,
+        messageId,
+      });
+
+      // 重新获取当前会话以刷新数据
+      getSessionByIdQuery.refetch();
     } catch (error) {
-      logger.error("移除消息过程出错", { error, messageId });
+      console.error("Failed to remove message:", error);
     }
   };
 
@@ -88,42 +104,24 @@ export function useSessionHooks() {
     sessionId: string,
     message: TChatMessage
   ) => {
-    logger.info("添加消息到会话", {
-      sessionId,
-      messageId: message.id,
-      messageType: message?.rawHuman ? "人类" : "AI"
-    });
-
     try {
       await addMessageToSessionMutation.mutateAsync({
         sessionId,
         message,
       });
-      logger.info("消息添加成功", { messageId: message.id });
+
     } catch (error) {
-      logger.error("消息添加失败", {
-        error,
-        sessionId,
-        messageId: message.id
-      });
+      console.error("Failed to add message:", error);
     }
   };
 
-  // 通过ID获取会话 
+  // 通过ID获取会话
   const getSessionById = async (id: string) => {
-    logger.info("获取会话", { id });
-
     try {
-      const session = await getSessionByIdMutation.mutateAsync(id);
-      logger.info("会话获取成功", {
-        id,
-        title: session?.title,
-        messageCount: session?.messages?.length
-      });
-      return session;
+      return await getSessionByIdMutation.mutateAsync(id);
     } catch (error) {
-      logger.error("会话获取失败", { error, id });
-      return null;
+      console.error("Failed to get session:", error);
+      return undefined;
     }
   };
 
@@ -131,24 +129,17 @@ export function useSessionHooks() {
 
   return {
     sessions,
-    setAllSessionLoading,
-    setCurrentSessionLoading,
     currentSession,
     isGenerating,
-    setSessions,
+    isAllSessionLoading,
+    isCurrentSessionLoading,
     createSession,
     removeMessage,
     addMessageToSession,
     getSessionById,
     setCurrentSession,
     setGenerating,
-    refetchSessions: () => {
-      logger.debug("手动刷新所有会话");
-      return sessionsQuery.refetch();
-    },
-    refetchCurrentSession: () => {
-      logger.debug("手动刷新当前会话");
-      return currentSessionQuery.refetch();
-    }
+    refetchSessions: sessionsQuery.refetch,
+    refetchCurrentSession: getSessionByIdQuery.refetch,
   };
 }

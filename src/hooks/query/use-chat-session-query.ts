@@ -1,9 +1,10 @@
 import { get, set } from "idb-keyval";
 import dayjs from "dayjs";
 import { v4 } from "uuid";
+
 import { sortSessions } from "@/lib/chat/helper";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { TChatMessage, TChatSession } from "@/types/chat/chat.type";
+import { TChatMessage, TChatSession } from "@/types/chat";
 
 export const useChatSessionQuery = (id?: string) => {
   const getSessions = async (): Promise<TChatSession[]> => {
@@ -237,36 +238,7 @@ export const useChatSessionQuery = (id?: string) => {
       sessionsQuery.refetch();
     },
   });
-  const updateMessageMutation = useMutation({
-    mutationFn: async ({
-      sessionId,
-      messageId,
-      message,
-    }: {
-      sessionId: string;
-      messageId: string;
-      message: Partial<TChatMessage>;
-    }) => {
-      const sessions = await getSessions();
-      const newSessions = sessions.map((session) => {
-        if (session.id === sessionId) {
-          const newMessages = session.messages.map((msg) => {
-            if (msg.id === messageId) {
-              return { ...msg, ...message };
-            }
-            return msg;
-          });
-          return { ...session, messages: newMessages };
-        }
-        return session;
-      });
-      await set("chat-sessions", newSessions);
-      return newSessions;
-    },
-    onSuccess: () => {
-      sessionsQuery.refetch();
-    },
-  });
+
   return {
     sessionsQuery,
     setSessionMutation,
@@ -280,6 +252,5 @@ export const useChatSessionQuery = (id?: string) => {
     removeMessageByIdMutation,
     getSessionByIdMutation,
     addSessionsMutation,
-    updateMessageMutation
   };
 };

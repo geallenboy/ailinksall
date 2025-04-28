@@ -42,20 +42,13 @@ export type TAttachment = {
  * 负责处理用户输入、消息发送及相关交互
  */
 export const ChatInput = memo(() => {
-  logger.info("🚀 组件初始化");
-
-  // 记录渲染次数
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-  logger.debug(`第 ${renderCount.current} 次渲染`);
+  logger.debug("ChatInput 渲染");
 
   // 获取路由参数中的sessionId
   const { sessionId } = useParams();
-  logger.debug("获取路由参数", { sessionId });
 
   // 滚动到底部的功能hook
   const { showButton, scrollToBottom } = useScrollToBottom();
-  logger.debug("初始化滚动状态", { showScrollButton: showButton });
 
   // 语音录制相关功能和状态
   const {
@@ -65,28 +58,6 @@ export const ChatInput = memo(() => {
     text,
     transcribing,
   } = useRecordVoice();
-  logger.debug("初始化语音录制状态", {
-    recording,
-    transcribing,
-    hasText: !!text,
-  });
-
-  // 获取当前会话信息
-  const { currentSession } = useSessionStore();
-  logger.debug("获取当前会话", {
-    sessionId: currentSession?.id,
-    messageCount: currentSession?.messages?.length,
-  });
-
-  // 获取助手状态管理
-  const { open: openAssistants } = useAssistantStore();
-
-  // 获取选中的助手信息
-  const { selectedAssistant } = useAssistantHooks();
-  logger.debug("获取选中助手", {
-    assistantName: selectedAssistant?.assistant.name,
-    assistantKey: selectedAssistant?.assistant.key,
-  });
 
   // 获取聊天相关功能
   const {
@@ -100,24 +71,22 @@ export const ChatInput = memo(() => {
     setContextValue,
     stopGeneration,
   } = useChatHooks();
-  logger.debug("获取聊天功能状态", {
-    hasEditor: !!editor,
-    isGenerating,
-    hasContextValue: !!contextValue,
-    openPromptsBotCombo,
-  });
+
+  // 获取当前会话信息
+  const { currentSession } = useSessionStore();
+
+  // 获取助手状态管理
+  const { open: openAssistants } = useAssistantStore();
+
+  // 获取选中的助手信息
+  const { selectedAssistant } = useAssistantHooks();
 
   // 获取偏好设置
   const { preferences } = usePreferenceStore();
   const { updatePreferences } = usePreferenceHooks();
-  logger.debug("获取偏好设置", {
-    defaultAssistant: preferences.defaultAssistant,
-    messageLimit: preferences.messageLimit,
-  });
 
   // 获取模型列表和助手信息
   const { models, getAssistantByKey, getAssistantIcon } = useModelList();
-  logger.debug("获取模型列表", { modelCount: models.length });
 
   // 创建输入框引用
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -126,14 +95,9 @@ export const ChatInput = memo(() => {
   const [selectedAssistantKey, setSelectedAssistantKey] = useState<
     TAssistant["key"]
   >(preferences.defaultAssistant);
-  logger.debug("设置初始助手Key", { selectedAssistantKey });
 
   // 确保选中的助手有效，否则重置为默认助手
   useEffect(() => {
-    logger.debug("检查选中助手有效性", {
-      preferredAssistant: preferences.defaultAssistant,
-    });
-
     const assistantProps = getAssistantByKey(preferences.defaultAssistant);
     if (assistantProps?.model) {
       logger.debug("使用有效的首选助手", {

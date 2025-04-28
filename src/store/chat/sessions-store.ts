@@ -3,14 +3,14 @@ import { TChatMessage, TChatSession } from "@/types/chat";
 
 interface SessionState {
     sessions: TChatSession[];
-    currentSession?: TChatSession | undefined;
+    currentSession?: TChatSession;
     isGenerating: boolean;
     isAllSessionLoading: boolean;
     isCurrentSessionLoading: boolean;
 
     // Actions
     setSessions: (sessions: TChatSession[]) => void;
-    setCurrentSession: (session?: TChatSession | undefined) => void;
+    setCurrentSession: (session?: any) => void;
     setGenerating: (isGenerating: boolean) => void;
     setAllSessionLoading: (isLoading: boolean) => void;
     setCurrentSessionLoading: (isLoading: boolean) => void;

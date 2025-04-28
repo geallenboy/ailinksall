@@ -39,7 +39,7 @@ export const convertFileToBase64 = (
 };
 
 export const sortSessions = (
-  sessions: Partial<TChatSession>[],
+  sessions: TChatSession[],
   sortBy: "createdAt" | "updatedAt"
 ) => {
   return sessions.sort((a, b) => dayjs(b[sortBy]).diff(dayjs(a[sortBy])));

@@ -1,33 +1,48 @@
+"use client";
+
+import { memo, useCallback, useEffect, useRef } from "react";
 import { TChatMessage } from "@/types/chat/chat.type";
-import { useEffect, useRef } from "react";
+import { useSessionHooks } from "@/hooks/chat";
 import { AIMessage } from "./ai-message";
 import { HumanMessage } from "./human-message";
-import { useSessionHooks } from "@/hooks/chat";
+import { createLogger } from "@/utils/logger";
 
-export type TMessageListByDate = Record<string, TChatMessage[]>;
-export const ChatMessages = () => {
+const logger = createLogger("ChatMessages");
+
+export const ChatMessages = memo(() => {
+  logger.debug("ChatMessages 渲染");
+
   const { currentSession } = useSessionHooks();
-
   const chatContainer = useRef<HTMLDivElement>(null);
 
+  // 使用防抖函数优化滚动
+  const scrollToBottom = useCallback(() => {
+    if (!chatContainer.current) return;
+
+    // 使用requestAnimationFrame优化滚动性能
+    requestAnimationFrame(() => {
+      chatContainer.current!.scrollTop = chatContainer.current!.scrollHeight;
+    });
+  }, []);
+
+  // 监听消息变化自动滚动
   useEffect(() => {
     scrollToBottom();
-  }, [currentSession?.messages]);
+  }, [currentSession?.messages, scrollToBottom]);
 
-  const scrollToBottom = () => {
-    if (chatContainer.current) {
-      chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
-    }
-  };
+  // 优化消息渲染，避免不必要的重渲染
+  const renderMessage = useCallback(
+    (message: TChatMessage, isLast: boolean) => {
+      return (
+        <div className="flex flex-col gap-1 items-end w-full" key={message.id}>
+          <HumanMessage chatMessage={message} isLast={isLast} />
+          <AIMessage chatMessage={message} isLast={isLast} />
+        </div>
+      );
+    },
+    []
+  );
 
-  const renderMessage = (message: TChatMessage, isLast: boolean) => {
-    return (
-      <div className="flex flex-col gap-1 items-end w-full" key={message.id}>
-        <HumanMessage chatMessage={message} isLast={isLast} />
-        <AIMessage chatMessage={message} isLast={isLast} />
-      </div>
-    );
-  };
   return (
     <div
       className="flex flex-col w-full items-center h-[100dvh] overflow-y-auto no-scrollbar pt-[60px] pb-[200px]"
@@ -46,4 +61,6 @@ export const ChatMessages = () => {
       </div>
     </div>
   );
-};
+});
+
+ChatMessages.displayName = "ChatMessages";
