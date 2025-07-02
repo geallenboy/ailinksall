@@ -109,7 +109,7 @@ export const useMarkdown = () => {
         },
         blockquote: (children) => (
           <blockquote>
-            <p>{children}</p>
+            <div>{children}</div>
           </blockquote>
         ),
         list: (children, ordered) =>
@@ -126,7 +126,7 @@ export const useMarkdown = () => {
               ))}
             </ul>
           ),
-        listItem: (children) => <p>{children}</p>,
+        listItem: (children) => <div>{children}</div>,
         strong: (children) => <strong>{children}</strong>,
         hr: () => <hr className="my-4 border-gray-100 dark:border-white/10" />,
         code: (code, lang) => (
