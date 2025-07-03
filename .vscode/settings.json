@@ -1,0 +1,8 @@
+{
+  "terminal.integrated.commandWaiting": false,
+  "terminal.integrated.autoExec": true,
+  "terminal.integrated.confirmBeforeKill": false,
+  "ai.continueInTerminal": true,
+  "ai.autoExecuteCommands": true,
+  "extensions.autoUpdate": false
+} 

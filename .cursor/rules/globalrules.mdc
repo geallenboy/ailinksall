@@ -1,0 +1,121 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Cursor AI 编程协作开发规范
+总览 (Overview)
+本规范旨在为项目开发提供一套统一的编码标准、目录结构和协作流程。所有团队成员 Cursor都应严格遵守此规范，以确保代码的可读性、可维护性和整体质量。
+- 核心原则: 约定优于配置、模块化、关注点分离。
+- 核心技术栈: 本项目基于 Next.js (App Router) 构建，使用 TypeScript、Tailwind CSS、Drizzle ORM (Postgres)、Clerk (认证) 和 SWR (数据请求)。
+一. 环境与技术栈 (Environment & Tech Stack)
+1. 包管理器 (Package Manager):
+  - 项目 必须 使用 pnpm 进行依赖管理。
+  - AI 指令: Use pnpm to install/add/remove dependencies.
+2. 核心库与框架:
+  - Web 框架: Next.js (v15+)
+  - 认证: Clerk (@clerk/nextjs)
+  - 数据库 ORM: Drizzle ORM (drizzle-orm)
+  - 数据校验: Zod (zod)
+  - 表单: React Hook Form (react-hook-form) + @hookform/resolvers
+  - 数据请求/缓存: SWR
+  - UI 组件库: 基于 shadcn/ui 模式 (@radix-ui/*, tailwind-merge, clsx)
+  - 国际化: next-intl
+
+二. 项目核心目录结构 (Project Core Structure)
+/
+├── public/
+├── src/
+│   ├── app/
+│   │   ├── news/           # ✅ 新闻页面 (news Pages)
+│   │   ├── api/             # ✅ API 路由 (e.g., Webhooks for Svix, Stripe)
+│   │   └── auth/            # ✅ 用户认证页面和逻辑 (Clerk)
+│   │
+│   ├── components/          # ✅ 全局公共组件
+│   │   ├── ui/              # 原子级 UI 组件 (shadcn/ui)
+│   │   └── layout/          # 布局组件 (e.g., Header, Footer, Sidebar)
+│   │   └── providers/       # providers
+│   │
+│   ├── features/            # ⭐ **功能模块化核心目录**
+│   │
+│   ├── drizzle/
+│   │   ├── schemas/       # ✅ Drizzle ORM 数据库表结构
+│   │   └── migrations/      # Drizzle Kit 生成的数据库迁移文件
+│   │
+│   ├── hooks/               # ✅ 全局公共 Hooks
+│   │
+│   ├── lib/                 # ✅ 公共库/工具函数 (e.g., Stripe/Cloudflare client, utils.ts)
+│   │
+│   ├── store/               # ✅ 全局状态管理 (Zustand stores)
+│   │
+│   ├── styles/              # (新增) 全局样式 (globals.css)
+│   │
+│   ├── translate/           # ✅ 国际化/翻译 (next-intl)
+│   │
+│   └── types/               # 全局 TypeScript 类型定义
+│
+├── .eslintrc.js
+├── .prettierrc
+├── pnpm-lock.yaml
+└── tsconfig.json
+3. 功能模块化开发 (Feature-based Modular Development)
+这是项目开发的核心模式。任何新功能或大型页面的修改都应遵循此结构。
+模块结构模板
+src/features/{module-name}/
+│
+├── actions/             # ✅ 服务端操作 (Server Actions)，用于 Drizzle 数据库增删改查
+│   └── index.ts
+│
+├── components/          # 模块专属 React 组件
+│
+├── constants.ts         # ✅ 常量 (e.g., SWR keys, magic strings)
+│
+├── hooks/               # ✅ 数据请求 Hooks (使用 SWR)
+│   └── index.ts         # (e.g., useGetProducts, useCreateProduct)
+│
+├── schemas.ts           # ✅ 数据校验 Schema (使用 Zod)
+│
+├── types.ts             # 模块专属的 TypeScript 类型定义
+│
+└── index.ts             # 模块出口文件，统一导出模块内容
+详细规则:
+1. 页面与组件拆分:
+  - 当页面 (app/**/page.tsx) 逻辑过长时，必须 将其拆分为独立的组件，并放置在对应的 src/features/{module-name}/components/ 目录中。
+  - AI 指令: Refactor the page {page-name}. Extract {section-name} into a separate component within the '{module-name}' feature module.
+2. 数据操作 (Server Actions):
+  - 所有与数据库的 CRUD 操作 必须 封装在 src/features/{module-name}/actions/index.ts 文件中，并使用 'use server'。
+  - Action 函数应直接调用 Drizzle ORM 进行数据库交互。
+3. 数据请求 (Data Fetching):
+  - 客户端数据获取 必须 通过 src/features/{module-name}/hooks/index.ts 中的自定义 Hook 完成。
+  - 这些 Hooks 必须 使用 SWR 进行数据获取、缓存和状态管理。
+  - 严禁 在组件内部直接编写 fetch 逻辑。
+  - AI 指令: In the '{module-name}' feature, create a hook to fetch {data-name} using SWR.
+4. 表单处理 (Forms):
+  - 所有表单 必须 使用 React Hook Form。
+  - 表单校验 必须 通过 Zod (@hookform/resolvers/zod) 完成，复用 schemas.ts 中定义的规则。
+  - AI 指令: Create a form for {feature-name} using React Hook Form and Zod for validation.
+5. 数据校验 (Validation):
+  - 所有表单、API 负载的校验规则 必须 使用 Zod 定义在 src/features/{module-name}/schemas.ts 中。
+  - 鼓励使用 drizzle-zod 从 Drizzle schema 生成 Zod schema，以保证类型一致。
+4. 编码与代码风格 (Coding & Style Guide)
+1. 命名约定:
+  - 文件: React 组件 PascalCase.tsx, 其他 kebab-case.ts。
+  - 变量/函数: camelCase。
+  - 自定义 Hooks: useCamelCase。
+  - 类型/接口: PascalCase。
+2. 组件开发:
+  - 优先使用 shadcn/ui 组件 作为基础，并在此之上进行组合或封装。
+  - 保持组件小而美，遵循单一职责原则。
+  - 使用 TypeScript interface 或 type 定义 Props。
+3. 样式方案 (Styling):
+  - 唯一选择: Tailwind CSS。
+  - 必须 使用 tailwind-merge 和 clsx 处理动态和条件性类名，确保样式正确合并。
+4. 国际化 (i18n):
+  - 所有面向用户的文本 必须 使用 next-intl 提供的翻译函数。
+  - 翻译 Key 的命名应清晰、结构化 (e.g., page.home.title)。
+5. 代码质量与版本控制 (Code Quality & Version Control)
+1. 代码格式化:
+  - 所有代码在提交前 必须 通过 eslint . --fix 和 Prettier 的校验和格式化。
+  - 强烈建议配置 Git pre-commit hook 自动执行此操作。
+2. 测试 (Testing):
+  - 关键业务逻辑（如 actions）和复杂工具函数 应该 编写单元测试或集成测试。

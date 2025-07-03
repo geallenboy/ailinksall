@@ -1,0 +1,159 @@
+{
+  "LocaleSwitcher": {
+    "zh": "中文",
+    "en": "English",
+    "label": "语言"
+  },
+  "locale": {
+    "zh": "中文",
+    "en": "英文",
+    "label": "语言",
+    "professional": "专业版",
+    "pro": "专业版",
+    "enterprise": "企业版",
+    "switchTheme": "切换主题",
+    "light": "浅色",
+    "dark": "深色",
+    "system": "系统"
+  },
+  "app": {
+    "name": "AI导航总站",
+    "description": "AI 从这里开始"
+  },
+  "navigation": {
+    "home": "首页",
+    "workflows": "工作流",
+    "articles": "文章",
+    "contact": "联系我们",
+    "dashboard": "仪表盘",
+    "settings": "设置",
+    "admin": "管理后台",
+    "signOut": "退出登录",
+    "signIn": "登录",
+    "signUp": "注册"
+  },
+  "footer": {
+    "description": "AI 从这里开始",
+    "stats": {
+      "users": "用户",
+      "workflows": "工作流",
+      "tutorials": "教程",
+      "downloads": "下载量",
+      "updates": "更新次数"
+    },
+    "social": {
+      "email": "邮箱"
+    },
+    "links": {
+      "features": {
+        "title": "功能",
+        "workflows": "工作流",
+        "tutorials": "教程",
+        "featured": "精选",
+        "register": "注册"
+      },
+      "categories": {
+        "title": "分类",
+        "dataProcessing": "数据处理",
+        "marketing": "市场营销",
+        "ecommerce": "电子商务",
+        "document": "文档",
+        "contact": "联系我们"
+      }
+    },
+    "copyright": "© {year} AI导航总站. 版权所有.",
+    "madeWith": "用心构建",
+    "forCommunity": "为了社区.",
+    "tagline": "你的 AI 之旅从这里开始."
+  },
+  "auth": {
+    "signIn": {
+      "title": "欢迎回来",
+      "subtitle": "登录以继续访问 AI导航总站",
+      "description": "输入您的凭据以访问您的帐户。",
+      "emailLabel": "邮箱",
+      "passwordLabel": "密码",
+      "button": "登录",
+      "forgotPassword": "忘记密码了？",
+      "noAccount": "还没有帐户？",
+      "signUpLink": "注册"
+    },
+    "errors": {
+      "emailNotFound": "找不到邮箱。请检查后重试。",
+      "incorrectPassword": "密码不正确。请重试。",
+      "tooManyAttempts": "尝试次数过多。请稍后重试。",
+      "loginFailed": "登录失败。请重试。",
+      "networkError": "网络错误。请检查您的连接并重试。",
+      "needVerification": "需要额外的验证步骤。"
+    }
+  },
+  "login": {
+    "signUpForm": {
+      "email": "邮箱",
+      "password": "密码",
+      "passwordPlaceholder": "请输入您的密码",
+      "btn1": "登录",
+      "or": "或使用以下方式继续",
+      "info3": "还没有帐户？",
+      "btn2": "注册",
+      "emailLabel": "邮箱地址",
+      "passwordLabel": "密码",
+      "confirmPasswordLabel": "确认密码",
+      "button": "注册",
+      "hasAccount": "已经有帐户了？",
+      "signInLink": "登录"
+    },
+    "resetPassword": {
+      "name": "忘记密码",
+      "title": "重置密码",
+      "description": "在下方输入您的新密码。",
+      "newPasswordLabel": "新密码",
+      "confirmPasswordLabel": "确认新密码",
+      "button": "重置密码"
+    }
+  },
+  "errorPages": {
+    "error": {
+      "title": "出现错误",
+      "description": "应用程序遇到了一个错误",
+      "errorMessage": "错误信息：",
+      "errorId": "错误ID",
+      "development": "系统遇到了一个意外错误，请稍后重试。",
+      "buttons": {
+        "retry": "重试",
+        "home": "返回首页",
+        "back": "返回上一页"
+      },
+      "support": "如果问题持续存在，请联系技术支持并提供错误ID"
+    },
+    "globalError": {
+      "title": "系统错误",
+      "description": "应用程序遇到了一个严重错误",
+      "support": "如果问题持续存在，请联系技术支持"
+    },
+    "notFound": {
+      "title": "页面未找到",
+      "description": "抱歉，您访问的页面不存在",
+      "errorCode": "404 错误：",
+      "message": "您访问的页面可能已被删除、移动或URL输入错误。",
+      "buttons": {
+        "home": "返回首页",
+        "back": "返回上一页",
+        "search": "搜索内容"
+      },
+      "support": "如果您认为这是一个错误，请联系我们的技术支持"
+    },
+    "unauthorized": {
+      "title": "访问被拒绝",
+      "description": "抱歉，您没有权限访问此页面",
+      "permissionDenied": "权限不足：",
+      "message": "此页面仅限管理员访问。如果您认为这是一个错误，请联系系统管理员。",
+      "buttons": {
+        "login": "登录账户",
+        "home": "返回首页",
+        "back": "返回上一页"
+      },
+      "adminContact": "如需获取管理员权限，请联系系统管理员"
+    }
+  }
+}

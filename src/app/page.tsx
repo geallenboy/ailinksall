@@ -1,11 +1,6 @@
-import Hero from "@/components/home/hero";
-import Navigation from "@/components/home/navigation";
+import { redirect } from 'next/navigation';
+import { defaultLocale } from '@/translate/i18n/config';
 
-export default function HomePage() {
-  return (
-    <main>
-      <Navigation />
-      <Hero />
-    </main>
-  );
-}
+export default function RootPage() {
+  redirect(`/${defaultLocale}`);
+} 

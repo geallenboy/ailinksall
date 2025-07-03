@@ -1,0 +1,159 @@
+{
+  "LocaleSwitcher": {
+    "zh": "Chinese",
+    "en": "English",
+    "label": "Language"
+  },
+  "locale": {
+    "zh": "Chinese",
+    "en": "English", 
+    "label": "Language",
+    "professional": "Professional",
+    "pro": "Pro",
+    "enterprise": "Enterprise",
+    "switchTheme": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "app": {
+    "name": "AI Links All",
+    "description": "AI Starts Here"
+  },
+  "navigation": {
+    "home": "Home",
+    "workflows": "Workflows",
+    "articles": "Articles",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "admin": "Admin Panel",
+    "signOut": "Sign Out",
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "footer": {
+    "description": "AI Starts Here",
+    "stats": {
+      "users": "Users",
+      "workflows": "Workflows",
+      "tutorials": "Tutorials",
+      "downloads": "Downloads",
+      "updates": "Updates"
+    },
+    "social": {
+      "email": "Email"
+    },
+    "links": {
+      "features": {
+        "title": "Features",
+        "workflows": "Workflows",
+        "tutorials": "Tutorials",
+        "featured": "Featured",
+        "register": "Register"
+      },
+      "categories": {
+        "title": "Categories",
+        "dataProcessing": "Data Processing",
+        "marketing": "Marketing",
+        "ecommerce": "E-commerce",
+        "document": "Document",
+        "contact": "Contact"
+      }
+    },
+    "copyright": "© {year} AI Links All. All rights reserved.",
+    "madeWith": "Made with",
+    "forCommunity": "for the community.",
+    "tagline": "Your AI journey starts here."
+  },
+  "auth": {
+    "signIn": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to continue to AI Links All",
+      "description": "Enter your credentials to access your account.",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "button": "Sign In",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign Up"
+    },
+    "errors": {
+      "emailNotFound": "Email not found. Please check and try again.",
+      "incorrectPassword": "Password is incorrect. Please try again.",
+      "tooManyAttempts": "Too many attempts. Please try again later.",
+      "loginFailed": "Login failed. Please try again.",
+      "networkError": "Network error. Please check your connection and try again.",
+      "needVerification": "An additional verification step is required."
+    }
+  },
+  "login": {
+    "signUpForm": {
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "btn1": "Sign In",
+      "or": "Or continue with",
+      "info3": "Don't have an account?",
+      "btn2": "Sign Up",
+      "emailLabel": "Email address",
+      "passwordLabel": "Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "button": "Sign Up",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign In"
+    },
+    "resetPassword": {
+      "name": "Forgot password",
+      "title": "Reset Password",
+      "description": "Enter your new password below.",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "button": "Reset Password"
+    }
+  },
+  "errorPages": {
+    "error": {
+      "title": "An Error Occurred",
+      "description": "The application encountered an error",
+      "errorMessage": "Error Message:",
+      "errorId": "Error ID",
+      "development": "The system encountered an unexpected error, please try again later.",
+      "buttons": {
+        "retry": "Retry",
+        "home": "Back to Home",
+        "back": "Go Back"
+      },
+      "support": "If the problem persists, please contact technical support and provide the error ID"
+    },
+    "globalError": {
+      "title": "System Error",
+      "description": "The application encountered a critical error",
+      "support": "If the problem persists, please contact technical support"
+    },
+    "notFound": {
+      "title": "Page Not Found",
+      "description": "Sorry, the page you are looking for does not exist",
+      "errorCode": "404 Error:",
+      "message": "The page you are looking for may have been deleted, moved, or the URL is incorrect.",
+      "buttons": {
+        "home": "Back to Home",
+        "back": "Go Back",
+        "search": "Search Content"
+      },
+      "support": "If you believe this is an error, please contact our technical support"
+    },
+    "unauthorized": {
+      "title": "Access Denied",
+      "description": "Sorry, you do not have permission to access this page",
+      "permissionDenied": "Insufficient permissions:",
+      "message": "This page is only accessible to administrators. If you believe this is an error, please contact the system administrator.",
+      "buttons": {
+        "login": "Login to Account",
+        "home": "Back to Home",
+        "back": "Go Back"
+      },
+      "adminContact": "To obtain administrator permissions, please contact the system administrator"
+    }
+  }
+}
