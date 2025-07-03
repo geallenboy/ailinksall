@@ -1,24 +1,24 @@
 {
   "LocaleSwitcher": {
-    "zh": "Chinese",
+    "zh": "中文",
     "en": "English",
     "label": "Language"
   },
   "locale": {
     "zh": "Chinese",
-    "en": "English", 
+    "en": "English",
     "label": "Language",
     "professional": "Professional",
     "pro": "Pro",
     "enterprise": "Enterprise",
-    "switchTheme": "Toggle theme",
+    "switchTheme": "Switch Theme",
     "light": "Light",
     "dark": "Dark",
     "system": "System"
   },
   "app": {
-    "name": "AI Links All",
-    "description": "AI Starts Here"
+    "name": "AI Navigation Hub",
+    "description": "AI starts here"
   },
   "navigation": {
     "home": "Home",
@@ -27,13 +27,13 @@
     "contact": "Contact",
     "dashboard": "Dashboard",
     "settings": "Settings",
-    "admin": "Admin Panel",
+    "admin": "Admin",
     "signOut": "Sign Out",
     "signIn": "Sign In",
     "signUp": "Sign Up"
   },
   "footer": {
-    "description": "AI Starts Here",
+    "description": "AI starts here",
     "stats": {
       "users": "Users",
       "workflows": "Workflows",
@@ -58,33 +58,33 @@
         "marketing": "Marketing",
         "ecommerce": "E-commerce",
         "document": "Document",
-        "contact": "Contact"
+        "contact": "Contact Us"
       }
     },
-    "copyright": "© {year} AI Links All. All rights reserved.",
-    "madeWith": "Made with",
+    "copyright": "© {year} AI Navigation Hub. All rights reserved.",
+    "madeWith": "Built with",
     "forCommunity": "for the community.",
     "tagline": "Your AI journey starts here."
   },
   "auth": {
     "signIn": {
-      "title": "Welcome Back",
-      "subtitle": "Sign in to continue to AI Links All",
+      "title": "Welcome back",
+      "subtitle": "Sign in to continue to AI Navigation Hub",
       "description": "Enter your credentials to access your account.",
       "emailLabel": "Email",
       "passwordLabel": "Password",
       "button": "Sign In",
       "forgotPassword": "Forgot your password?",
       "noAccount": "Don't have an account?",
-      "signUpLink": "Sign Up"
+      "signUpLink": "Sign up"
     },
     "errors": {
       "emailNotFound": "Email not found. Please check and try again.",
-      "incorrectPassword": "Password is incorrect. Please try again.",
+      "incorrectPassword": "Incorrect password. Please try again.",
       "tooManyAttempts": "Too many attempts. Please try again later.",
       "loginFailed": "Login failed. Please try again.",
       "networkError": "Network error. Please check your connection and try again.",
-      "needVerification": "An additional verification step is required."
+      "needVerification": "Additional verification step is required."
     }
   },
   "login": {
@@ -101,11 +101,11 @@
       "confirmPasswordLabel": "Confirm Password",
       "button": "Sign Up",
       "hasAccount": "Already have an account?",
-      "signInLink": "Sign In"
+      "signInLink": "Sign in"
     },
     "resetPassword": {
-      "name": "Forgot password",
-      "title": "Reset Password",
+      "name": "Forgot Password",
+      "title": "Reset your password",
       "description": "Enter your new password below.",
       "newPasswordLabel": "New Password",
       "confirmPasswordLabel": "Confirm New Password",
@@ -114,46 +114,195 @@
   },
   "errorPages": {
     "error": {
-      "title": "An Error Occurred",
+      "title": "An error occurred",
       "description": "The application encountered an error",
-      "errorMessage": "Error Message:",
+      "errorMessage": "Error message:",
       "errorId": "Error ID",
-      "development": "The system encountered an unexpected error, please try again later.",
+      "development": "The system encountered an unexpected error. Please try again later.",
       "buttons": {
         "retry": "Retry",
         "home": "Back to Home",
         "back": "Go Back"
       },
-      "support": "If the problem persists, please contact technical support and provide the error ID"
+      "support": "If the problem persists, please contact support and provide the Error ID"
     },
     "globalError": {
       "title": "System Error",
       "description": "The application encountered a critical error",
-      "support": "If the problem persists, please contact technical support"
+      "support": "If the problem persists, please contact support"
     },
     "notFound": {
       "title": "Page Not Found",
       "description": "Sorry, the page you are looking for does not exist",
-      "errorCode": "404 Error:",
-      "message": "The page you are looking for may have been deleted, moved, or the URL is incorrect.",
+      "errorCode": "Error 404:",
+      "message": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.",
       "buttons": {
         "home": "Back to Home",
         "back": "Go Back",
         "search": "Search Content"
       },
-      "support": "If you believe this is an error, please contact our technical support"
+      "support": "If you believe this is an error, please contact our support team"
     },
     "unauthorized": {
       "title": "Access Denied",
       "description": "Sorry, you do not have permission to access this page",
-      "permissionDenied": "Insufficient permissions:",
-      "message": "This page is only accessible to administrators. If you believe this is an error, please contact the system administrator.",
+      "permissionDenied": "Permission Denied:",
+      "message": "This page is restricted to administrators. If you believe this is an error, please contact the system administrator.",
       "buttons": {
-        "login": "Login to Account",
+        "login": "Login",
         "home": "Back to Home",
         "back": "Go Back"
       },
-      "adminContact": "To obtain administrator permissions, please contact the system administrator"
+      "adminContact": "To request admin access, please contact the system administrator"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Cognitive Enhancement Partner for the AI Era",
+      "title": {
+        "line1": "From Information to Wisdom",
+        "line2": "Let AI Think For You"
+      },
+      "description": "In the AI era, we face a paradox of extreme information abundance yet extreme scarcity of effective information.<br /><strong>AI Insight Engine</strong> is no longer a content provider, but your <strong>cognitive unloader</strong> and <strong>value refiner</strong>.",
+      "cta": {
+        "primary": "Experience AI Insight Engine",
+        "secondary": "Learn More"
+      }
+    },
+    "valueLevels": {
+      "title": "Four Levels of Value Enhancement",
+      "subtitle": "We use AI to elevate you from raw information to wise action",
+      "levels": {
+        "information": {
+          "title": "Information",
+          "question": "\"What happened?\"",
+          "description": "Raw news content, lowest value, ubiquitous"
+        },
+        "insight": {
+          "title": "Insight",
+          "question": "\"Why does this matter?\"",
+          "description": "Connecting data points to reveal underlying patterns and meanings"
+        },
+        "foresight": {
+          "title": "Foresight",
+          "question": "\"What will happen next?\"",
+          "description": "Predicting future scenarios based on insights, providing a 'future map' for decisions"
+        },
+        "action": {
+          "title": "Action",
+          "question": "\"What should I do?\"",
+          "description": "Personalized, actionable advice, the rarest and most valuable"
+        }
+      }
+    },
+    "engines": {
+      "title": "The Three AI Engines",
+      "subtitle": "No longer 'modules', we call them 'engines' to power your cognition",
+      "insight": {
+        "title": "The Insight Engine",
+        "tagline": "The \"So What?\" Engine",
+        "description": "Every piece of news comes with an AI-generated \"Core Insight\" tag, telling you \"why this matters\" in one sentence.",
+        "features": {
+          "core": {
+            "title": "Core Insight",
+            "description": "Extracts the key value in a single sentence"
+          },
+          "impact": {
+            "title": "Impact Analysis",
+            "description": "Analyzes the specific impact on different roles"
+          },
+          "trend": {
+            "title": "Trend Recognition",
+            "description": "Automatically discovers underlying patterns"
+          }
+        }
+      },
+      "foresight": {
+        "title": "The Foresight Engine",
+        "tagline": "The \"What If?\" Engine",
+        "description": "Click on any trend, and the AI will dynamically generate multiple \"future scripts\" to provide you with foresight.",
+        "features": {
+          "optimistic": {
+            "title": "Optimistic Scenario",
+            "description": "The best possible outcome of technology adoption"
+          },
+          "probable": {
+            "title": "Most Likely Scenario",
+            "description": "The gradual development path"
+          },
+          "cautious": {
+            "title": "Cautious Scenario",
+            "description": "Warnings about challenges and risks"
+          }
+        }
+      },
+      "action": {
+        "title": "The Action Engine",
+        "tagline": "The \"Now What?\" Engine",
+        "description": "Generates personalized action plans for each insight based on your role.",
+        "features": {
+          "personalized": {
+            "title": "Action List",
+            "description": "A 3-5 step actionable plan"
+          },
+          "roadmap": {
+            "title": "Time Planning",
+            "description": "Can be started within this week"
+          },
+          "trackable": {
+            "title": "Personalization",
+            "description": "Customized based on your role"
+          }
+        }
+      }
+    },
+    "finalCta": {
+      "title": "Start Your Cognitive Enhancement Journey",
+      "subtitle": "Let AI be your 'external brain', working tirelessly for you 24/7",
+      "button": "Experience Now"
+    }
+  },
+  "insights": {
+    "title": "AI Insight Engine",
+    "subtitle": "From Information to Wisdom: Let AI extract value, foresee the future, and guide action for you",
+    "latestInsightsTitle": "Latest Insights",
+    "relatedInsightsTitle": "Insights related to \"{trend}\"",
+    "viewAll": "View All",
+    "noArticles": "No articles available.",
+    "noArticlesForTrend": "No articles available for this trend yet.",
+    "errors": {
+      "articles": "Could not load articles at the moment. Please try again later.",
+      "trends": "Could not load trend data at the moment."
+    },
+    "demo": {
+      "insights": {
+        "title": "Experience the AI Insight Engine",
+        "description": "This is a demo version with no live data. In a real environment, AI-analyzed latest tech news would be displayed here.",
+        "tags": {
+          "analysis": "AI Insight Analysis",
+          "recommendation": "Personalized Recommendations",
+          "prediction": "Trend Prediction"
+        }
+      },
+      "foresight": {
+        "title": "The Foresight Engine",
+        "description": "When enough data is available, the AI will analyze technology trends and generate future scenario predictions for you here.",
+        "tags": {
+          "analysis": "Trend Analysis",
+          "scenario": "Future Scenario Generation",
+          "impact": "Impact Assessment"
+        }
+      },
+      "action": {
+        "title": "The Action Engine",
+        "descriptionWithRole": "As a {role}, personalized action suggestions will be generated for you for each article.",
+        "descriptionWithoutRole": "Select a role, and the AI will generate a personalized action plan for you.",
+        "tags": {
+          "checklist": "Personalized Checklist",
+          "planning": "Planning Suggestions",
+          "priority": "Priority Ranking"
+        }
+      }
     }
   }
 }

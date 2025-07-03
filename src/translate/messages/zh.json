@@ -155,5 +155,154 @@
       },
       "adminContact": "如需获取管理员权限，请联系系统管理员"
     }
+  },
+  "home": {
+    "hero": {
+      "badge": "AI时代的认知增强伙伴",
+      "title": {
+        "line1": "从信息到智慧",
+        "line2": "让AI为您思考"
+      },
+      "description": "在AI时代，我们面临信息极度丰富却有效信息极度稀缺的悖论。<br /><strong>AI洞察引擎</strong>不再是内容提供者，而是您的<strong>认知减负者</strong>和<strong>价值提炼者</strong>。",
+      "cta": {
+        "primary": "体验AI洞察引擎",
+        "secondary": "了解更多"
+      }
+    },
+    "valueLevels": {
+      "title": "四个层次的价值提升",
+      "subtitle": "我们用AI将您从底层信息不断向上提升到智慧行动",
+      "levels": {
+        "information": {
+          "title": "信息 Information",
+          "question": "\"发生了什么？\"",
+          "description": "原始资讯内容，价值最低，无处不在"
+        },
+        "insight": {
+          "title": "洞察 Insight",
+          "question": "\"这为什么重要？\"",
+          "description": "连接信息点，揭示背后的模式和含义"
+        },
+        "foresight": {
+          "title": "预见 Foresight",
+          "question": "\"接下来会发生什么？\"",
+          "description": "基于洞察推演预测，提供决策的\"未来地图\""
+        },
+        "action": {
+          "title": "行动 Action",
+          "question": "\"我应该怎么做？\"",
+          "description": "个性化可执行建议，最稀缺最有价值"
+        }
+      }
+    },
+    "engines": {
+      "title": "三大AI引擎",
+      "subtitle": "不再是\"模块\"，我们称之为\"引擎\"，为您的认知提供动力",
+      "insight": {
+        "title": "洞察引擎",
+        "tagline": "The \"So What?\" Engine",
+        "description": "每条资讯都有AI生成的\"核心洞察\"标签，一句话告诉您\"这件事为什么重要\"。",
+        "features": {
+          "core": {
+            "title": "核心洞察",
+            "description": "一句话提炼关键价值"
+          },
+          "impact": {
+            "title": "影响分析",
+            "description": "对不同角色的具体影响"
+          },
+          "trend": {
+            "title": "趋势识别",
+            "description": "自动发现潜在模式"
+          }
+        }
+      },
+      "foresight": {
+        "title": "预见引擎",
+        "tagline": "The \"What If?\" Engine",
+        "description": "点击任意趋势，AI动态生成多种\"未来剧本\"，为您提供远见。",
+        "features": {
+          "optimistic": {
+            "title": "乐观场景",
+            "description": "技术普及的最佳可能"
+          },
+          "probable": {
+            "title": "最可能场景",
+            "description": "渐进式发展路径"
+          },
+          "cautious": {
+            "title": "审慎场景",
+            "description": "挑战与风险预警"
+          }
+        }
+      },
+      "action": {
+        "title": "行动引擎",
+        "tagline": "The \"Now What?\" Engine",
+        "description": "基于您的身份角色，为每个洞察生成个性化的行动计划。",
+        "features": {
+          "personalized": {
+            "title": "行动清单",
+            "description": "3-5步骤可执行计划"
+          },
+          "roadmap": {
+            "title": "时间规划",
+            "description": "本周内可开始执行"
+          },
+          "trackable": {
+            "title": "个性化",
+            "description": "基于您的身份定制"
+          }
+        }
+      }
+    },
+    "finalCta": {
+      "title": "开始您的认知增强之旅",
+      "subtitle": "让AI成为您的\"外脑\"，7×24小时不知疲倦地为您服务",
+      "button": "立即体验"
+    }
+  },
+  "insights": {
+    "title": "AI洞察引擎",
+    "subtitle": "从信息到智慧：让AI为您提炼价值，预见未来，指导行动",
+    "latestInsightsTitle": "最新洞察",
+    "relatedInsightsTitle": "\"{trend}\" 相关洞察",
+    "viewAll": "查看全部",
+    "noArticles": "暂无文章",
+    "noArticlesForTrend": "该趋势下暂无相关文章",
+    "errors": {
+      "articles": "暂时无法加载文章，请稍后再试。",
+      "trends": "暂时无法加载趋势数据。"
+    },
+    "demo": {
+      "insights": {
+        "title": "体验AI洞察引擎",
+        "description": "当前为演示版本，暂无实际数据。在真实环境中，这里会显示AI分析的最新科技资讯。",
+        "tags": {
+          "analysis": "AI洞察分析",
+          "recommendation": "个性化推荐",
+          "prediction": "趋势预测"
+        }
+      },
+      "foresight": {
+        "title": "预见引擎",
+        "description": "当有足够数据时，AI会在这里为您分析技术趋势，并生成未来场景预测。",
+        "tags": {
+          "analysis": "趋势识别与分析",
+          "scenario": "未来场景生成",
+          "impact": "影响力评估"
+        }
+      },
+      "action": {
+        "title": "行动引擎",
+        "descriptionWithRole": "作为\"{role}\"，每篇文章都会为您生成个性化的行动建议。",
+        "descriptionWithoutRole": "选择身份后，AI会为您生成个性化的行动计划。",
+        "tags": {
+          "checklist": "个性化行动清单",
+          "planning": "时间规划建议",
+          "priority": "优先级排序"
+        }
+      }
+    }
   }
 }
